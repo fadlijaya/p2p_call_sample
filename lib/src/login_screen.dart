@@ -32,7 +32,6 @@ class BodyState extends State<BodyLayout> {
   final TextEditingController _controllerPassword = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   late bool _showPassword = true;
-
   bool _isLoginContinues = false;
   int? _selectedUserId;
 

@@ -9,3 +9,8 @@ final String PARAM_SIGNAL_TYPE = 'signal_type';
 final String SIGNAL_TYPE_START_CALL = "startCall";
 final String SIGNAL_TYPE_END_CALL = "endCall";
 final String SIGNAL_TYPE_REJECT_CALL = "rejectCall";
+
+const String titleLoginApp = "Login";
+const String subtitleLoginApp = "Silahkan masukkan NIP dan Password Anda!";
+
+
