@@ -6,12 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:p2p_call_sample/src/select_opponents_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../network/api_service.dart';
-import '../src/managers/call_manager.dart';
-import '../src/utils/consts.dart';
-import '../src/utils/pref_util.dart';
-import '../theme/colors.dart';
-import '../src/utils/configs.dart' as config;
+import 'network/api_service.dart';
+import 'src/managers/call_manager.dart';
+import 'src/utils/consts.dart';
+import 'src/utils/pref_util.dart';
+import 'theme/colors.dart';
+import 'src/utils/configs.dart' as config;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -252,12 +252,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget buildIconLogo() {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 40),
-      child: Image.asset(
+    return Padding(padding: EdgeInsets.only(top: 60.0),
+    child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 40),
+        child: Image.asset(
         'assets/logo.png',
         width: 160,
-      ),
+        ),
+      )
     );
   }
 

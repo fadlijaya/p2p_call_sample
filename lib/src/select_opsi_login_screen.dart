@@ -8,7 +8,8 @@ import '../src/utils/configs.dart' as config;
 import 'utils/pref_util.dart';
 
 class SelectOpsiLoginScreen extends StatefulWidget {
-  const SelectOpsiLoginScreen({Key? key}) : super(key: key);
+  const
+  SelectOpsiLoginScreen({Key? key}) : super(key: key);
 
   @override
   State<SelectOpsiLoginScreen> createState() => _SelectOpsiLoginScreenState();
