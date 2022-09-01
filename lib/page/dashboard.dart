@@ -109,19 +109,16 @@ class _DashboardState extends State<Dashboard>{
               onTap: () => {},
               child: SizedBox(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
                       "Hadir",
                       style: TextStyle(
                           fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
                     ),
                     Text(
                       "1 Hari",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
                     )
                   ],
                 ),
@@ -137,13 +134,9 @@ class _DashboardState extends State<Dashboard>{
                       "Izin",
                       style: TextStyle(
                           fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
                     ),
                     Text(
                       "3 Hari",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
                     )
                   ],
                 ),
@@ -159,13 +152,9 @@ class _DashboardState extends State<Dashboard>{
                       "Alpha",
                       style: TextStyle(
                           fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
                     ),
                     Text(
                       "1 Hari",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
                     )
                   ],
                 ),
@@ -175,6 +164,12 @@ class _DashboardState extends State<Dashboard>{
         ),
         SizedBox(
           height: 40.0,
+        ),
+        Text('Menu Utama',
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: kBlack)),
+        SizedBox(
+          height: 10.0,
         ),
         gridMenu(),
       ],
@@ -222,7 +217,7 @@ class _DashboardState extends State<Dashboard>{
                   height: 4,
                 ),
                 const Text(
-                  "Riwayat Absensi",
+                  "Riwayat\nAbsensi",
                   style: TextStyle(
                       fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
@@ -245,7 +240,7 @@ class _DashboardState extends State<Dashboard>{
                   height: 4,
                 ),
                 const Text(
-                  "Keterangan Izin",
+                  "Keterangan\nIzin",
                   style: TextStyle(
                       fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
