@@ -86,171 +86,156 @@ class _DashboardState extends State<Dashboard>{
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
-                child: Stack(
-                  children: [
-                    gridKeterangan(),
-                  ],
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: GridView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 1.2,
+                              crossAxisSpacing: 16.0,
+                              mainAxisSpacing: 16.0)),
+                          padding: EdgeInsets.all(16.0),
+                          children: [
+                            Card(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Status Hadir",
+                                    style: TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                      "1 Hari"
+                                  )
+                                ],
+                              ),
+                            ),
+                            Card(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Status Izin",
+                                    style: TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                      "3 Hari"
+                                  )
+                                ],
+                              ),
+                            ),
+                            Card(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Status Alfa",
+                                    style: TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                      "3 Hari"
+                                  )
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.0,right: 16.0),
+                        child: const Divider(thickness: 1,),
+                      ),
+                      Expanded(
+                        child: GridView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 1.2,
+                              crossAxisSpacing: 16.0,
+                              mainAxisSpacing: 16.0)),
+                          padding: EdgeInsets.all(16.0),
+                          children: [
+                            GestureDetector(
+                              onTap: () => {},
+                              child: SizedBox(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/icon/class_room.png",
+                                      width: 36,
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    const Text(
+                                      "\nClassroom",
+                                      style: TextStyle(fontWeight: FontWeight.w600),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => {},
+                              child: SizedBox(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/icon/class_room.png",
+                                      width: 36,
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    const Text(
+                                      "Riwayat\nAbsensi",
+                                      style: TextStyle(fontWeight: FontWeight.w600),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => {},
+                              child: SizedBox(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/icon/class_room.png",
+                                      width: 36,
+                                    ),
+                                    const SizedBox(
+                                      height: 4,
+                                    ),
+                                    const Text(
+                                      "\nIzin",
+                                      style: TextStyle(fontWeight: FontWeight.w600),
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 ),
                 ),
               ),
-            )
-        );
-  }
-
-  Widget gridKeterangan() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            GestureDetector(
-              onTap: () => {},
-              child: SizedBox(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Hadir",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      "1 Hari",
-                    )
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => {},
-              child: SizedBox(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Izin",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      "3 Hari",
-                    )
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () => {},
-              child: SizedBox(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Alpha",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      "1 Hari",
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          height: 40.0,
-        ),
-        Text('Menu Utama',
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: kBlack)),
-        SizedBox(
-          height: 10.0,
-        ),
-        gridMenu(),
-      ],
-    );
-  }
-
-  Widget gridMenu() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        GestureDetector(
-          onTap: () => {},
-          child: SizedBox(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/icon/class_room.png",
-                  width: 36,
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                const Text(
-                  "Classroom",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                )
-              ],
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () => {},
-          child: SizedBox(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/icon/class_room.png",
-                  width: 36,
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                const Text(
-                  "Riwayat\nAbsensi",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                )
-              ],
-            ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () => {},
-          child: SizedBox(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/icon/class_room.png",
-                  width: 36,
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                const Text(
-                  "Keterangan\nIzin",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                )
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+            );
   }
 
 }
