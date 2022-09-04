@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
+import 'classroom/classroom_page.dart';
 
 class Dashboard extends StatefulWidget{
   @override
@@ -77,7 +78,7 @@ class _DashboardState extends State<Dashboard>{
 
   Widget gridKategori() {
     return SizedBox(
-        height: MediaQuery.of(context).size.height / 2.2,
+        height: MediaQuery.of(context).size.height / 1.9,
         child: Padding(
             padding: EdgeInsets.only(top: 170.0),
             child: Padding(
@@ -161,7 +162,13 @@ class _DashboardState extends State<Dashboard>{
                           padding: EdgeInsets.all(16.0),
                           children: [
                             GestureDetector(
-                              onTap: () => {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ClassRoomPage())
+                                );
+                              },
                               child: SizedBox(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
