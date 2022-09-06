@@ -24,6 +24,9 @@ dependencies:
   permission_handler: ^9.2.0
   device_info_plus: ^3.2.3
   video_player: ^2.2.3
+  google_maps_flutter: ^2.0.4
+  geolocator: ^9.0.1
+  geocoding: ^2.0.4
 
 dev_dependencies:
   flutter_test:
@@ -46,3 +49,5 @@ flutter:
     - logo.png
     - scanner.png
     - class_room.png
+    - location.png
+    - office.png

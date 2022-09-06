@@ -72,7 +72,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
                     child: FloatingActionButton(
                       heroTag: "ScreenSharing",
                       child: Icon(
-                        Icons.screen_share,
+                        Icons.chat,
                         color: Colors.white,
                       ),
                       backgroundColor: Colors.teal,

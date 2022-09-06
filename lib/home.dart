@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:p2p_call_sample/page/absensi.dart';
+import 'package:p2p_call_sample/page/absensi/absensi.dart';
 import 'package:p2p_call_sample/page/dashboard.dart';
 import 'package:p2p_call_sample/page/profil.dart';
 import 'package:p2p_call_sample/theme/colors.dart';
@@ -13,7 +13,6 @@ class _HomeState extends State<Home>{
   int currenTab = 0;
   final List<Widget> screens = [
     Dashboard(),
-    Absensi(),
     Profil()
   ];
 
@@ -33,7 +32,13 @@ class _HomeState extends State<Home>{
               "assets/scanner.png",
               width: 30.0,
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Absensi())
+          );
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
