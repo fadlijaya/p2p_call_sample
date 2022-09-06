@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 import '../../theme/colors.dart';
 
@@ -19,41 +19,36 @@ class Absensi extends StatefulWidget{
 
 class _AbsensiStateDetail extends State<Absensi> {
 
-  Completer<GoogleMapController> _controllerGoogleMap = Completer();
-  GoogleMapController? mapController;
+  late LatLng _initialcameraposition = LatLng(-5.1389010027311, 119.49208931472);
+  late GoogleMapController _controller;
+  Location _location = Location();
   Set<Marker> markers = Set();
-  LatLng? showLocation;
-  late Location location;
 
-  late Position currentPosition;
-  var geoLocator = Geolocator();
-
-  Future<void> locationPosition() async{
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    setState((){
-      currentPosition = position;
-      widget.Lat = position.latitude;
-      widget.Long = position.longitude;
-      LatLng latLatPosition = LatLng(position.latitude, position.longitude);
-      CameraPosition cameraPosition = new CameraPosition(target: latLatPosition, zoom: 18.0);
-      mapController!.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+  void _onMapCreated(GoogleMapController _cntlr){
+    _controller = _cntlr;
+    _location.onLocationChanged.listen((l) {
+      _controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(l.latitude!, l.longitude!),zoom: 18),
+        ),
+      );
+      setState((){
+        widget.Lat = l.latitude!;
+        widget.Long = l.longitude!;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(widget.Lat.toString()+", "+widget.Long.toString())));
     });
   }
-
-  static final CameraPosition _kGooglePlex = CameraPosition(
-      target: LatLng(-5.1389010027311, 119.49208931472),
-  );
 
   @override
   void initState() {
     super.initState();
-    locationPosition();
   }
 
   Set<Marker> getmarkers() { //markers to place on map
     setState(() {
       markers.add(Marker( //add first marker
-        markerId: MarkerId(showLocation.toString()),
+        markerId: MarkerId(_initialcameraposition.toString()),
         position: LatLng(-5.1389010027311, 119.49208931472), //position of marker
         // infoWindow: InfoWindow( //popup info
         //   title: 'Marker Title First ',
@@ -136,12 +131,12 @@ class _AbsensiStateDetail extends State<Absensi> {
           widget.Lat!,
           widget.Long!,
           -5.1389010027311,
-          119.49208931472,
+          119.49208931472
         );
         if(distanceInMeters < 80){
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
         }else{
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Anda berada di luar radius "+distanceInMeters.toString()+" meter")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di luar radius "+distanceInMeters.toString()+" meter")));
         }
       },
       child: Container(
@@ -163,17 +158,11 @@ class _AbsensiStateDetail extends State<Absensi> {
 
   Widget GoogleView() {
     return GoogleMap(
+      initialCameraPosition: CameraPosition(target: _initialcameraposition),
       mapType: MapType.normal,
-      myLocationButtonEnabled: true,
-      initialCameraPosition: _kGooglePlex,
+      onMapCreated: _onMapCreated,
       myLocationEnabled: true,
-      zoomGesturesEnabled: true,
       markers: getmarkers(),
-      onMapCreated: (controller) {
-        _controllerGoogleMap.complete(controller);
-        mapController = controller;
-        locationPosition();
-      },
     );
   }
 }

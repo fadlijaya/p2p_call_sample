@@ -24,9 +24,9 @@ dependencies:
   permission_handler: ^9.2.0
   device_info_plus: ^3.2.3
   video_player: ^2.2.3
-  google_maps_flutter: ^2.0.4
+  google_maps_flutter: ^2.2.0
   geolocator: ^9.0.1
-  geocoding: ^2.0.4
+  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:
