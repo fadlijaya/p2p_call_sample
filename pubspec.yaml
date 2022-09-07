@@ -27,6 +27,7 @@ dependencies:
   google_maps_flutter: ^2.2.0
   geolocator: ^9.0.1
   location: ^4.4.0
+  geocoding: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +49,8 @@ flutter:
     - splash-screen.png
     - logo.png
     - scanner.png
-    - class_room.png
+    - classroom.png
     - location.png
     - office.png
+    - izin.png
+    - absen.png

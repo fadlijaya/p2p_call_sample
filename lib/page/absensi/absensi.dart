@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:geocoding/geocoding.dart' as geolocator;
 
 import '../../theme/colors.dart';
 
@@ -12,6 +13,9 @@ class Absensi extends StatefulWidget{
   Absensi({Key? key}) : super(key: key);
 
   double? Lat, Long;
+  double? LatAbsen=-5.1389010027311, LongAbsen=119.49208931472;
+  String? lokasiAbsen = "";
+  String? lokasiLive = "";
 
   @override
   State<Absensi> createState() => _AbsensiStateDetail();
@@ -19,14 +23,14 @@ class Absensi extends StatefulWidget{
 
 class _AbsensiStateDetail extends State<Absensi> {
 
-  late LatLng _initialcameraposition = LatLng(-5.1389010027311, 119.49208931472);
+  late LatLng _initialcameraposition = LatLng(widget.LatAbsen!, widget.LongAbsen!);
   late GoogleMapController _controller;
   Location _location = Location();
   Set<Marker> markers = Set();
 
-  void _onMapCreated(GoogleMapController _cntlr){
+  void _onMapCreated(GoogleMapController _cntlr) async{
     _controller = _cntlr;
-    _location.onLocationChanged.listen((l) {
+    _location.onLocationChanged.listen((l) async {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(target: LatLng(l.latitude!, l.longitude!),zoom: 18),
@@ -36,7 +40,20 @@ class _AbsensiStateDetail extends State<Absensi> {
         widget.Lat = l.latitude!;
         widget.Long = l.longitude!;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(widget.Lat.toString()+", "+widget.Long.toString())));
+      if(widget.Lat != null && widget.Long != null){
+        await geolocator.placemarkFromCoordinates(widget.Lat!, widget.Long!).then((List<geolocator.Placemark> placemarks){
+          geolocator.Placemark place = placemarks[0];
+          setState((){
+            widget.lokasiLive = "${place.street}, ${place.subLocality},${place.subAdministrativeArea}";
+          });
+        });
+      }
+      await geolocator.placemarkFromCoordinates(widget.LatAbsen!, widget.LongAbsen!).then((List<geolocator.Placemark> placemarks){
+        geolocator.Placemark place = placemarks[0];
+        setState((){
+          widget.lokasiAbsen = "${place.street}, ${place.subLocality},${place.subAdministrativeArea}";
+        });
+      });
     });
   }
 
@@ -45,18 +62,17 @@ class _AbsensiStateDetail extends State<Absensi> {
     super.initState();
   }
 
-  Set<Marker> getmarkers() { //markers to place on map
+  Set<Marker> getmarkers(){ //markers to place on map
     setState(() {
       markers.add(Marker( //add first marker
         markerId: MarkerId(_initialcameraposition.toString()),
-        position: LatLng(-5.1389010027311, 119.49208931472), //position of marker
+        position: LatLng(widget.LatAbsen!, widget.LongAbsen!), //position of marker
         // infoWindow: InfoWindow( //popup info
         //   title: 'Marker Title First ',
         //   snippet: 'My Custom Subtitle',
         // ),
         icon: BitmapDescriptor.defaultMarker, //Icon for Marker
       ));
-
       //add more markers here
     });
     return markers;
@@ -79,80 +95,99 @@ class _AbsensiStateDetail extends State<Absensi> {
       body: Stack(
         children: <Widget>[GoogleView(), _Card()],
       ),
+      bottomNavigationBar: buildButtonLogin(),
     );
   }
 
   _Card() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: new Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-            child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        ListTile(
-                          leading: Image.asset('assets/icon/office.png',width: 35,),
-                          title: Text('Lokasi kantor', style: const TextStyle(fontWeight: FontWeight.bold,),),
-                          subtitle: Text('Jl. Sukamaju'),
-                        ),
-                        ListTile(
-                          leading: Image.asset('assets/icon/location.png',width: 35,),
-                          title: Text('Lokasi anda saat ini', style: const TextStyle(fontWeight: FontWeight.bold,),),
-                          subtitle: Text('Jl. Sukamaju'),
-                        ),
-                        buildButtonLogin()
+    return DraggableScrollableSheet(
+      initialChildSize: 0.2,
+      minChildSize: 0.2,
+      maxChildSize: 0.5,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            // border: Border.all(color: Colors.blue, width: 2),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(18.0),
+              topRight: Radius.circular(18.0),
+            ),
+          ),
+          child: Scrollbar(
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  width: 60,
+                  height: 8,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12), color: kBlack26),
+                ),
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.only(left: 18.0, right: 18.0, top: 8.0, bottom: 18.0),
+                    controller: scrollController,
+                    children: [
+                      ListTile(
+                        leading: Image.asset('assets/icon/office.png',width: 35,),
+                        title: Text('Lokasi absen', style: const TextStyle(fontWeight: FontWeight.bold,),),
+                        subtitle: Text(widget.lokasiAbsen!),
+                      ),
+                      ListTile(
+                        leading: Image.asset('assets/icon/location.png',width: 35,),
+                        title: Text('Lokasi anda saat ini', style: const TextStyle(fontWeight: FontWeight.bold,),),
+                        subtitle: Text(widget.lokasiLive!),
+                      ),
                     ],
-              ),
-              ),
+                  ),
+                )
+              ],
             )
-        ],
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget buildButtonLogin() {
-    return ElevatedButton(
-      style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(kCelticBlue),
-          shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
-      onPressed: () {
-        double distanceInMeters = GeolocatorPlatform.instance.distanceBetween(
-          widget.Lat!,
-          widget.Long!,
-          -5.1389010027311,
-          119.49208931472
-        );
-        if(distanceInMeters < 80){
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
-        }else{
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di luar radius "+distanceInMeters.toString()+" meter")));
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.only(
-          left: 24,
-          right: 24,
-        ),
-        width: double.infinity,
-        height: 40,
-        child: Center(
-          child: Text(
-            "Absen".toUpperCase(),
-            style: const TextStyle(color: kWhite),
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(kCelticBlue),
+            shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
+        onPressed: () {
+          double distanceInMeters = GeolocatorPlatform.instance.distanceBetween(
+              widget.Lat!,
+              widget.Long!,
+              widget.LatAbsen!,
+              widget.LongAbsen!
+          );
+          if(distanceInMeters < 80){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di luar radius "+distanceInMeters.toString()+" meter")));
+          }
+        },
+        child: Container(
+          margin: const EdgeInsets.only(
+            left: 24,
+            right: 24,
+          ),
+          width: double.infinity,
+          height: 40,
+          child: Center(
+            child: Text(
+              "Absen".toUpperCase(),
+              style: const TextStyle(color: kWhite),
+            ),
           ),
         ),
-      ),
+      ),),
     );
   }
 

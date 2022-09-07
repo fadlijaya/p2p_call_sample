@@ -174,7 +174,7 @@ class _DashboardState extends State<Dashboard>{
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      "assets/icon/class_room.png",
+                                      "assets/icon/classroom.png",
                                       width: 36,
                                     ),
                                     const SizedBox(
@@ -196,7 +196,7 @@ class _DashboardState extends State<Dashboard>{
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      "assets/icon/class_room.png",
+                                      "assets/icon/absen.png",
                                       width: 36,
                                     ),
                                     const SizedBox(
@@ -218,7 +218,7 @@ class _DashboardState extends State<Dashboard>{
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Image.asset(
-                                      "assets/icon/class_room.png",
+                                      "assets/icon/izin.png",
                                       width: 36,
                                     ),
                                     const SizedBox(
