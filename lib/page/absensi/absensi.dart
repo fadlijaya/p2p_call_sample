@@ -16,6 +16,7 @@ class Absensi extends StatefulWidget{
 
   double? Lat, Long;
   double? LatAbsen=-5.1389010027311, LongAbsen=119.49208931472;
+  double radius = 80;
   String? lokasiAbsen="";
   String? lokasiLive="";
 
@@ -36,7 +37,7 @@ class _AbsensiStateDetail extends State<Absensi> {
     _location.onLocationChanged.listen((l) async {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude!, l.longitude!),zoom: 18),
+          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 18),
         ),
       );
       setState((){
@@ -62,14 +63,24 @@ class _AbsensiStateDetail extends State<Absensi> {
 
   Future<bool> _getCordinate() async{
     var response = await AbsensiService().getCordinate();
+    showAlertDialogLoading(context);
     if(response != null){
       _absenModel = response;
       if (_absenModel.id != null) {
+        Future.delayed(const Duration(seconds: 3), () {
+          Navigator.pop(context);
+        });
         return true;
       }else{
+        Future.delayed(const Duration(seconds: 3), () {
+          Navigator.pop(context);
+        });
         return false;
       }
     }else{
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.pop(context);
+      });
       return false;
     }
   }
@@ -77,12 +88,21 @@ class _AbsensiStateDetail extends State<Absensi> {
   _dataCordinate() async{
     bool getCordinate = await _getCordinate();
     if(getCordinate != true){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gagal terhubung keserver")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.info_outline, size: 20, color: Colors.red,),
+            SizedBox(width: 8),
+            Text("Gagal! terhubung keserver",)
+          ],
+        ),shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),behavior: SnackBarBehavior.floating,
+        elevation: 5,));
       Navigator.pop(context);
     }else{
       setState((){
         widget.LatAbsen = double.parse(_absenModel.lat!);
         widget.LongAbsen = double.parse(_absenModel.lng!);
+        widget.radius = _absenModel.radius!.toDouble();
       });
     }
   }
@@ -209,7 +229,7 @@ class _AbsensiStateDetail extends State<Absensi> {
         style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all(kCelticBlue),
             shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)))),
         onPressed: () {
           double distanceInMeters = GeolocatorPlatform.instance.distanceBetween(
               widget.Lat!,
@@ -217,7 +237,7 @@ class _AbsensiStateDetail extends State<Absensi> {
               widget.LatAbsen!,
               widget.LongAbsen!
           );
-          if(distanceInMeters < 80){
+          if(distanceInMeters < widget.radius){
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
           }else{
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di luar radius "+distanceInMeters.toString()+" meter")));
@@ -248,6 +268,26 @@ class _AbsensiStateDetail extends State<Absensi> {
       onMapCreated: _onMapCreated,
       myLocationEnabled: true,
       markers: getmarkers(),
+    );
+  }
+
+  showAlertDialogLoading(BuildContext context){
+    AlertDialog alert=AlertDialog(
+      content: Row(
+        children: [
+          const CircularProgressIndicator(),
+          Container(margin: const EdgeInsets.only(left: 15), child: const Text("Loading..." )),
+        ],),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context:context,
+      builder:(BuildContext context){
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: alert,
+        );
+      },
     );
   }
 }
