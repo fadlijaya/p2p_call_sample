@@ -1,5 +1,7 @@
 import 'package:connectycube_sdk/connectycube_sdk.dart';
 
+const String API_V2 = "https://absen.e-andalan.id/api/v1";
+
 const String APP_ID = "5966";
 const String AUTH_KEY = "A9Asb2HH8HkQEtd";
 const String AUTH_SECRET = "fKeS-SAR8d-H33x";
