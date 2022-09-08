@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/colors.dart';
 import 'classroom/classroom_page.dart';
@@ -9,6 +10,25 @@ class Dashboard extends StatefulWidget{
 }
 
 class _DashboardState extends State<Dashboard>{
+  String? user_type, nip_guru, nama_guru, sekolah_guru, profile_picture;
+
+  _getIdentitasGuru() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState((){
+      user_type = preferences.getString("user_type");
+      nip_guru = preferences.getString("nip_guru");
+      nama_guru = preferences.getString("nama_guru");
+      sekolah_guru = preferences.getString("sekolah_guru");
+      profile_picture = preferences.getString("profile_picture");
+    });
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    _getIdentitasGuru();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,8 +63,8 @@ class _DashboardState extends State<Dashboard>{
           children: [
             CircleAvatar(
               backgroundColor: kGrey,
-              backgroundImage: NetworkImage("https://e-andalan.id/images/siswa/default.jpg"),
-              radius: 30,
+              backgroundImage: NetworkImage(profile_picture.toString()),
+              radius: 35,
             ), const SizedBox(
               width: 10,
             ),
@@ -52,7 +72,7 @@ class _DashboardState extends State<Dashboard>{
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Halo, Muhammad Rizky",
+                Text("Halo, ${nama_guru}",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: kWhite)),
@@ -60,8 +80,26 @@ class _DashboardState extends State<Dashboard>{
                   height: 4,
                 ),
                 Text(
-                  "Kelas Satu",
+                  nip_guru.toString(),
                   style: const TextStyle(color: kWhite),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Column(
+                  children: [
+                    if (user_type == "smart_teacher") ...[
+                      Text(
+                        "Guru Smart School",
+                        style: const TextStyle(color: kWhite),
+                      ),
+                    ] else if(user_type == "school_teacher")...[
+                      Text(
+                        sekolah_guru.toString(),
+                        style: const TextStyle(color: kWhite),
+                      ),
+                    ],
+                  ],
                 ),
               ],
             ),

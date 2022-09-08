@@ -27,7 +27,7 @@ class _AppState extends State<App> {
         primarySwatch: colorCelticBlue,
       ),
       debugShowCheckedModeBanner: false,
-      home: Home()
+      home: LoginPage()
     );
   }
 }

@@ -6,8 +6,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geolocator;
+import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/model/Absen_model.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../theme/colors.dart';
 
@@ -61,33 +63,50 @@ class _AbsensiStateDetail extends State<Absensi> {
     });
   }
 
-  Future<bool> _getCordinate() async{
+  Future<int> _getCordinate() async{
     var response = await AbsensiService().getCordinate();
     showAlertDialogLoading(context);
-    if(response != null){
+    if(response != null && response != 401){
       _absenModel = response;
       if (_absenModel.id != null) {
-        Future.delayed(const Duration(seconds: 3), () {
-          Navigator.pop(context);
-        });
-        return true;
+        return 1;
       }else{
-        Future.delayed(const Duration(seconds: 3), () {
-          Navigator.pop(context);
-        });
-        return false;
+        return 0;
       }
+    }else if(response == 401){
+      return 2;
     }else{
-      Future.delayed(const Duration(seconds: 3), () {
-        Navigator.pop(context);
-      });
-      return false;
+      return 0;
     }
   }
 
   _dataCordinate() async{
-    bool getCordinate = await _getCordinate();
-    if(getCordinate != true){
+    int getCordinate = await _getCordinate();
+    if(getCordinate == 1) {
+      setState((){
+        widget.LatAbsen = double.parse(_absenModel.lat!);
+        widget.LongAbsen = double.parse(_absenModel.lng!);
+        widget.radius = _absenModel.radius!.toDouble();
+      });
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
+    }else if(getCordinate == 2){
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      setState(() {
+        preferences.clear();
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+                (route) => false);
+      });
+    }else{
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(
           children: [
@@ -95,15 +114,12 @@ class _AbsensiStateDetail extends State<Absensi> {
             SizedBox(width: 8),
             Text("Gagal! terhubung keserver",)
           ],
-        ),shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),behavior: SnackBarBehavior.floating,
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        behavior: SnackBarBehavior.floating,
         elevation: 5,));
       Navigator.pop(context);
-    }else{
-      setState((){
-        widget.LatAbsen = double.parse(_absenModel.lat!);
-        widget.LongAbsen = double.parse(_absenModel.lng!);
-        widget.radius = _absenModel.radius!.toDouble();
-      });
     }
   }
 
