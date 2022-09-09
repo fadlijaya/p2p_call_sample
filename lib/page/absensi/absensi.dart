@@ -150,7 +150,7 @@ class _AbsensiStateDetail extends State<Absensi> {
     circles = Set.from([Circle(
         circleId: CircleId("1"),
         center: LatLng(widget.LatAbsen!, widget.LongAbsen!),
-        radius: 50,
+        radius: widget.radius,
         strokeWidth: 1,
         strokeColor: Colors.red,
         fillColor: Colors.red.withOpacity(0.1)
