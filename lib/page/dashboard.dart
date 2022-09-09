@@ -79,13 +79,6 @@ class _DashboardState extends State<Dashboard>{
                 const SizedBox(
                   height: 4,
                 ),
-                Text(
-                  nip_guru.toString(),
-                  style: const TextStyle(color: kWhite),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
                 Column(
                   children: [
                     if (user_type == "smart_teacher") ...[

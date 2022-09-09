@@ -145,6 +145,14 @@ class _AbsensiStateDetail extends State<Absensi> {
     return markers;
   }
 
+  Set<Circle> circles = Set.from([Circle(
+    circleId: CircleId("1"),
+    center: LatLng(-5.1389010027311, 119.49208931472),
+    radius: 50,
+    strokeWidth: 0,
+    fillColor: Colors.black.withOpacity(0.1)
+  )]);
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -284,6 +292,7 @@ class _AbsensiStateDetail extends State<Absensi> {
       onMapCreated: _onMapCreated,
       myLocationEnabled: true,
       markers: getmarkers(),
+      circles: circles,
     );
   }
 

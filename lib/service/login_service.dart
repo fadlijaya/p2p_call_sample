@@ -18,7 +18,7 @@ class LoginService{
             'password': password,
           }));
       var responseJson = jsonDecode(response.body);
-      if (response.statusCode == 200 && responseJson['data'] != null) {
+      if (response.statusCode == 200) {
         return responseJson;
       } else if(response.statusCode == 401){
         return 401;
