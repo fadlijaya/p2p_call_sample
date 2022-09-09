@@ -32,6 +32,7 @@ class _AbsensiStateDetail extends State<Absensi> {
   late GoogleMapController _controller;
   Location _location = Location();
   Set<Marker> markers = Set();
+  Set<Circle> circles = Set();
   late AbsenModel _absenModel;
 
   void _onMapCreated(GoogleMapController _cntlr) async{
@@ -145,13 +146,18 @@ class _AbsensiStateDetail extends State<Absensi> {
     return markers;
   }
 
-  Set<Circle> circles = Set.from([Circle(
-    circleId: CircleId("1"),
-    center: LatLng(-5.1389010027311, 119.49208931472),
-    radius: 50,
-    strokeWidth: 0,
-    fillColor: Colors.black.withOpacity(0.1)
-  )]);
+  Set<Circle> getCircler() {
+    circles = Set.from([Circle(
+        circleId: CircleId("1"),
+        center: LatLng(widget.LatAbsen!, widget.LongAbsen!),
+        radius: 50,
+        strokeWidth: 1,
+        strokeColor: Colors.red,
+        fillColor: Colors.red.withOpacity(0.1)
+    )
+    ]);
+    return circles;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +298,7 @@ class _AbsensiStateDetail extends State<Absensi> {
       onMapCreated: _onMapCreated,
       myLocationEnabled: true,
       markers: getmarkers(),
-      circles: circles,
+      circles: getCircler(),
     );
   }
 
