@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geolocator;
 import 'package:p2p_call_sample/login_page.dart';
-import 'package:p2p_call_sample/model/Absen_model.dart';
+import 'package:p2p_call_sample/model/Absen/Absen_model.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -270,7 +270,18 @@ class _AbsensiStateDetail extends State<Absensi> {
           if(distanceInMeters < widget.radius){
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
           }else{
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di luar radius "+distanceInMeters.toString()+" meter")));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 20, color: Colors.red,),
+                  SizedBox(width: 8),
+                  Text("Gagal! Anda berada diluar radius",)
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              behavior: SnackBarBehavior.floating,
+              elevation: 5,));
           }
         },
         child: Container(

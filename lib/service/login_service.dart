@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../src/utils/configs.dart';
-import '../model/Absen_model.dart';
+import '../model/Absen/Absen_model.dart';
 class LoginService{
   login(String nip, String password) async {
     try{
-      var url = Uri.parse("$API_V2/auth/login");
+      var url = Uri.parse("$API_V1/auth/login");
       final response = await http.post(url,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',

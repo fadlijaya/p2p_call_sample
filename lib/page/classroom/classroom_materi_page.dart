@@ -4,18 +4,30 @@ import 'package:p2p_call_sample/page/classroom/detail_materi_classroom_page.dart
 import '../../theme/colors.dart';
 
 class ClassRoomMateriPage extends StatefulWidget {
-  const ClassRoomMateriPage({Key? key}) : super(key: key);
+  final String idKelas;
+  final String kodemapel;
+  final String title;
+
+  const ClassRoomMateriPage({
+    Key? key,
+    required this.idKelas,
+    required this.kodemapel,
+    required this.title
+  }) : super(key: key);
 
   @override
   State<ClassRoomMateriPage> createState() => _SmartRoomPageState();
 }
 
 class _SmartRoomPageState extends State<ClassRoomMateriPage> {
+
+  List materiMapelLkist = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Kimia Kelas XVII"),
+        title: Text('Matapelajaran ${widget.title}'),
       ),
       body: guruSmartSchool(),
     );
