@@ -8,7 +8,6 @@ import 'package:p2p_call_sample/src/select_opponents_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
-import 'network/api_service.dart';
 import 'src/managers/call_manager.dart';
 import 'src/utils/consts.dart';
 import 'src/utils/pref_util.dart';
@@ -75,6 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         await preferences.setString("nama_guru", response['user']['nama_guru']);
         await preferences.setInt("id_sekolah_guru", response['user']['id_identitas_sekolah']);
         await preferences.setString("sekolah_guru", response['user']['nama_sekolah']);
+        await preferences.setInt("pelajaran_id_guru", response['user']['pelajaran_id']);
       }
       await preferences.setString("email_guru", response['user']['email']);
       await preferences.setString("profile_picture", response['user']['profile_picture']);

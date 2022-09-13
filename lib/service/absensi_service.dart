@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../src/utils/configs.dart';
 import '../model/Absen/Absen_model.dart';
+
 class AbsensiService{
   getCordinate() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -19,6 +20,8 @@ class AbsensiService{
       var responseJson = jsonDecode(response.body);
       if (response.statusCode == 200 && responseJson['data'] != null) {
         return AbsenModel.fromJson(responseJson['data']);
+      } else if(response.statusCode == 401){
+        return 401;
       } else {
         return;
       }

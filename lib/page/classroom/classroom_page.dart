@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:p2p_call_sample/model/Classroom/Kelas_model.dart';
-import 'package:p2p_call_sample/page/classroom/classroom_matapelajaran_page.dart';
-import 'package:p2p_call_sample/page/classroom/classroom_materi_page.dart';
 import 'package:p2p_call_sample/service/classroom_service.dart';
 
 import '../../theme/colors.dart';
+import 'detail_materi_classroom_page.dart';
 
 class ClassRoomPage extends StatefulWidget {
-  const ClassRoomPage({Key? key}) : super(key: key);
+  final id_pelajaran;
+
+  const ClassRoomPage(
+      {Key? key,
+        required this.id_pelajaran})
+      : super(key: key);
 
   @override
   State<ClassRoomPage> createState() => _SmartRoomPageState();
 }
 
 class _SmartRoomPageState extends State<ClassRoomPage> {
-  List kelasList = [];
+  List pertemuanList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +36,10 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
   }
 
   Future getDataKelas() async {
-    var response = await ClassroomService().getKelas();
+    var response = await ClassroomService().getPertemuan(widget.id_pelajaran);
     if (!mounted) return;
     setState(() {
-      kelasList = response;
+      pertemuanList = response;
     });
   }
 
@@ -46,19 +49,27 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView.builder(
-          itemCount: kelasList.length,
+          itemCount: pertemuanList.length,
           itemBuilder: (context, i) {
-              return Column(
+              return  Column(
                 children: [
                   ListTile(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ClassRoomMataPelajaranPage(title: kelasList[i].nama_kelas,idKelas: kelasList[i].id_kelas.toString()))
+                              builder: (context) => DetailMateriClassRoomPage())
                       );
                     },
-                    title: Text('Kelas ${kelasList[i].nama_kelas}', style: const TextStyle(fontWeight: FontWeight.w600),),
+                    leading: const Icon(Icons.book, color: kBlack26,),
+                    title: Text('Pertemuan ${pertemuanList[i].pertemuan_ke}',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      '${pertemuanList[i].judul}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 12,),
                   ),
                 ],

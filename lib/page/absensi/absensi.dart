@@ -8,6 +8,7 @@ import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geolocator;
 import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/model/Absen/Absen_model.dart';
+import 'package:p2p_call_sample/page/absensi/camera/face_detector_view.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +22,7 @@ class Absensi extends StatefulWidget{
   double radius = 80;
   String? lokasiAbsen="";
   String? lokasiLive="";
+  String? rect;
 
   @override
   State<Absensi> createState() => _AbsensiStateDetail();
@@ -88,6 +90,7 @@ class _AbsensiStateDetail extends State<Absensi> {
         widget.LatAbsen = double.parse(_absenModel.lat!);
         widget.LongAbsen = double.parse(_absenModel.lng!);
         widget.radius = _absenModel.radius!.toDouble();
+        widget.rect = _absenModel.rect!;
       });
       Future.delayed(const Duration(seconds: 1), () {
         Navigator.pop(context);
@@ -176,7 +179,7 @@ class _AbsensiStateDetail extends State<Absensi> {
       body: Stack(
         children: <Widget>[GoogleView(), _BottomSheet()],
       ),
-      bottomNavigationBar: buildButtonLogin(),
+      bottomNavigationBar: buildButtonAbsen(),
     );
   }
 
@@ -250,7 +253,7 @@ class _AbsensiStateDetail extends State<Absensi> {
     );
   }
 
-  Widget buildButtonLogin() {
+  Widget buildButtonAbsen() {
     return Container(
       color: Colors.white,
       child: Padding(
@@ -268,7 +271,8 @@ class _AbsensiStateDetail extends State<Absensi> {
               widget.LongAbsen!
           );
           if(distanceInMeters < widget.radius){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Tes 2 Anda berada di dalam radius "+distanceInMeters.toString()+" meter")));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => FaceDetectorView(rect: widget.rect!,)));
           }else{
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Row(

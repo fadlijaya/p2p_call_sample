@@ -22,6 +22,8 @@ class LoginService{
         return responseJson;
       } else if(response.statusCode == 401){
         return 401;
+      } else {
+        return;
       }
     } on Exception catch (_) {
       return;

@@ -10,7 +10,7 @@ class Dashboard extends StatefulWidget{
 }
 
 class _DashboardState extends State<Dashboard>{
-  String? user_type, nip_guru, nama_guru, sekolah_guru, profile_picture;
+  String? user_type, nip_guru, nama_guru, sekolah_guru, profile_picture, id_pelajaran;
 
   _getIdentitasGuru() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -20,6 +20,7 @@ class _DashboardState extends State<Dashboard>{
       nama_guru = preferences.getString("nama_guru");
       sekolah_guru = preferences.getString("sekolah_guru");
       profile_picture = preferences.getString("profile_picture");
+      id_pelajaran = preferences.getInt("pelajaran_id_guru").toString();
     });
   }
 
@@ -197,7 +198,7 @@ class _DashboardState extends State<Dashboard>{
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ClassRoomPage())
+                                      builder: (context) => ClassRoomPage(id_pelajaran: id_pelajaran,))
                                 );
                               },
                               child: SizedBox(

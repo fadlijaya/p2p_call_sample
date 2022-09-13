@@ -29,6 +29,10 @@ dependencies:
   location: ^4.4.0
   geocoding: ^2.0.5
   another_flushbar: ^1.10.29
+  image_picker: ^0.8.5+3
+  camera: ^0.10.0
+  google_mlkit_face_detection:
+    path: dependencies/google_mlkit_face_detection
 
 dev_dependencies:
   flutter_test:
