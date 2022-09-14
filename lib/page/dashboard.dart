@@ -10,17 +10,22 @@ class Dashboard extends StatefulWidget{
 }
 
 class _DashboardState extends State<Dashboard>{
-  String? user_type, nip_guru, nama_guru, sekolah_guru, profile_picture, id_pelajaran;
+  String? user_type, nip, nama, jenis_user, profile_picture;
 
   _getIdentitasGuru() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState((){
       user_type = preferences.getString("user_type");
-      nip_guru = preferences.getString("nip_guru");
-      nama_guru = preferences.getString("nama_guru");
-      sekolah_guru = preferences.getString("sekolah_guru");
+      nip = preferences.getString("nip");
+      nama = preferences.getString("nama");
       profile_picture = preferences.getString("profile_picture");
-      id_pelajaran = preferences.getInt("pelajaran_id_guru").toString();
+      if(user_type == "smart_teacher"){
+        jenis_user = "Guru Smart School";
+      }else if(user_type == "school_teacher"){
+        jenis_user = preferences.getString("sekolah_guru");
+      }else if(user_type == "gov_employee"){
+        jenis_user = "Dinas Pendidikan Sulawesi Selatan";
+      }
     });
   }
 
@@ -73,35 +78,31 @@ class _DashboardState extends State<Dashboard>{
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Halo, ${nama_guru}",
+                Text("Halo, ${nama}",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: kWhite)),
                 const SizedBox(
                   height: 4,
                 ),
-                Column(
-                  children: [
-                    if (user_type == "smart_teacher") ...[
-                      Text(
-                        "Guru Smart School",
-                        style: const TextStyle(color: kWhite),
-                      ),
-                    ] else if(user_type == "school_teacher")...[
-                      Text(
-                        sekolah_guru.toString(),
-                        style: const TextStyle(color: kWhite),
-                      ),
-                    ],
-                  ],
+                Text(
+                  "${jenis_user}",
+                  style: const TextStyle(color: kWhite),
                 ),
               ],
             ),
             Spacer(),
-            Image.asset(
-              "assets/logo.png",
-              width: 80,
-            ),
+            if (user_type == "smart_teacher" || user_type == "school_teacher") ...[
+              Image.asset(
+                "assets/logo_smartschool_guru.png",
+                width: 80,
+              ),
+            ] else if(user_type == "gov_employee")...[
+              Image.asset(
+                "assets/logo_disdik_sulsel.png",
+                width: 70,
+              ),
+            ],
           ],
         ),
       )
@@ -183,91 +184,11 @@ class _DashboardState extends State<Dashboard>{
                         padding: EdgeInsets.only(left: 16.0,right: 16.0),
                         child: const Divider(thickness: 1,),
                       ),
-                      Expanded(
-                        child: GridView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              childAspectRatio: 1.2,
-                              crossAxisSpacing: 16.0,
-                              mainAxisSpacing: 16.0)),
-                          padding: EdgeInsets.all(16.0),
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ClassRoomPage(id_pelajaran: id_pelajaran,))
-                                );
-                              },
-                              child: SizedBox(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/icon/classroom.png",
-                                      width: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    const Text(
-                                      "\nClassroom",
-                                      style: TextStyle(fontWeight: FontWeight.w600),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => {},
-                              child: SizedBox(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/icon/absen.png",
-                                      width: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    const Text(
-                                      "Riwayat\nAbsensi",
-                                      style: TextStyle(fontWeight: FontWeight.w600),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => {},
-                              child: SizedBox(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset(
-                                      "assets/icon/izin.png",
-                                      width: 36,
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    const Text(
-                                      "\nIzin",
-                                      style: TextStyle(fontWeight: FontWeight.w600),
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      if (user_type == "smart_teacher" || user_type == "school_teacher") ...[
+                        MenuGuru(),
+                      ] else if(user_type == "gov_employee")...[
+                        MenuPegawai(),
+                      ],
                     ],
                   ),
                 ),
@@ -275,6 +196,154 @@ class _DashboardState extends State<Dashboard>{
                 ),
               ),
             );
+  }
+
+  Widget MenuGuru(){
+    return Expanded(
+      child: GridView(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 1.2,
+            crossAxisSpacing: 16.0,
+            mainAxisSpacing: 16.0)),
+        padding: EdgeInsets.all(16.0),
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ClassRoomPage())
+              );
+            },
+            child: SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icon/classroom.png",
+                    width: 36,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  const Text(
+                    "\nClassroom",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => {},
+            child: SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icon/absen.png",
+                    width: 36,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  const Text(
+                    "Riwayat\nAbsensi",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => {},
+            child: SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icon/izin.png",
+                    width: 36,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  const Text(
+                    "\nIzin",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget MenuPegawai(){
+    return Expanded(
+      child: GridView(
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1.4,
+            crossAxisSpacing: 12.0,
+            mainAxisSpacing: 12.0)),
+        padding: EdgeInsets.only(left: 16.0,right: 16.0),
+        children: [
+          GestureDetector(
+            onTap: () => {},
+            child: SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icon/absen.png",
+                    width: 36,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  const Text(
+                    "Riwayat\nAbsensi",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => {},
+            child: SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icon/izin.png",
+                    width: 36,
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  const Text(
+                    "\nIzin",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
 }

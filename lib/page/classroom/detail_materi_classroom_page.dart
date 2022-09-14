@@ -2,14 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:p2p_call_sample/model/Classroom/Classroom_detail_model.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../service/classroom_service.dart';
 import '../../theme/colors.dart';
+import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class DetailMateriClassRoomPage extends StatefulWidget {
+  final id_materi;
+
   DetailMateriClassRoomPage(
-      {Key? key})
+      {Key? key,
+        required this.id_materi})
       : super(key: key);
 
   @override
@@ -17,7 +23,19 @@ class DetailMateriClassRoomPage extends StatefulWidget {
 }
 
 class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
+
+  ClassroomDetailModel? classroomDetailModel;
   VideoPlayerController? _videoPlayerController;
+
+  Future getDetailClassroom() async {
+    var response = await ClassroomService().getDetail(widget.id_materi.toString());
+    if(response != null) {
+      if (!mounted) return;
+      setState(() {
+        classroomDetailModel = response;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -27,6 +45,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
         setState(() {});
       });
     super.initState();
+    getDetailClassroom();
   }
 
   @override
@@ -42,7 +61,9 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(16.0),
-        child: Column(
+        child: classroomDetailModel == null || classroomDetailModel == null
+            ? Center(child: CircularProgressIndicator())
+            : Column(
           children: [
             Expanded(
               child: SafeArea(
@@ -123,14 +144,22 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
   Widget headerPage() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child:  Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           backPage(),
           Text(
-            "Pertemuan Ke-1",
+            "Pertemuan ke- ${classroomDetailModel!.pertemuan_ke.toString()}",
+            textAlign: TextAlign.start,
             style: const TextStyle(fontWeight: FontWeight.w600),
-          )
+          ),
+          Spacer(),
+          if (classroomDetailModel!.tanggal_tayang != null) ...[
+            Text(
+              "Tanggal ${DateFormat('dd/MM/yyyy hh:mm').format(DateTime.parse('${classroomDetailModel!.tanggal_tayang}'))}",
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            )
+          ]
         ],
       ),
     );
@@ -144,15 +173,20 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
           borderRadius: BorderRadius.circular(8), color: kGrey),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
+        children: [
           Text(
             "File Modul",
             style: TextStyle(fontSize: 12),
           ),
-          Text(
+          classroomDetailModel!.url_file_modul == null
+              ? const Text(
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
+              : const Text(
+            "Ada",
+            style: TextStyle(fontSize: 12),
+          ),
         ],
       ),
     );
@@ -166,15 +200,20 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
           borderRadius: BorderRadius.circular(8), color: kGrey),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
+        children: [
           Text(
             "Bahan Ajar",
             style: TextStyle(fontSize: 12),
           ),
-          Text(
+          classroomDetailModel!.bahan_ajar == null
+              ? const Text(
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
+              : const Text(
+            "Ada",
+            style: TextStyle(fontSize: 12),
+          ),
         ],
       ),
     );
@@ -188,15 +227,20 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
           borderRadius: BorderRadius.circular(8), color: kGrey),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
+        children: [
           Text(
             "Bahan Tayang",
             style: TextStyle(fontSize: 12),
           ),
-          Text(
+          classroomDetailModel!.bahan_tayang == null
+              ? const Text(
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
+              : const Text(
+            "Ada",
+            style: TextStyle(fontSize: 12),
+          ),
         ],
       ),
     );
@@ -215,10 +259,15 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             "Bahan Video",
             style: TextStyle(fontSize: 12),
           ),
-          const Text(
+          classroomDetailModel!.url_video_bahan == null
+              ? const Text(
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
+              : const Text(
+            "Ada",
+            style: TextStyle(fontSize: 12),
+          ),
         ],
       ),
     );
@@ -241,7 +290,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
               ),
               Flexible(
                 child: Text(
-                  "Nama Guru",
+                  "${classroomDetailModel!.nama_guru_smart}",
                   textAlign: TextAlign.end,
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w600),
@@ -261,7 +310,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
               ),
               Flexible(
                 child: Text(
-                  "KIMIA KELAS XII",
+                  "${classroomDetailModel!.nama_pelajaran}",
                   textAlign: TextAlign.end,
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.w600),
@@ -282,7 +331,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
                 ),
               ),
               Text(
-                "Kelas XII",
+                "Kelas ${classroomDetailModel!.kode_tingkat}",
                 style:
                     const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               )
@@ -301,7 +350,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
                 ),
               ),
               Text(
-                "Semester Ganjil 2022/2023",
+                "${classroomDetailModel!.nama_tahun_akademik}",
                 style:
                     const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               )
@@ -335,7 +384,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Sifat Koligatif Larutan",
+                "${classroomDetailModel!.judul}",
                 style: const TextStyle(fontSize: 12),
               ),
             ],
@@ -365,7 +414,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Menganalisis penurutnan tekanan uap larutan elektrolit dan larutanelektrolit danlarutan non elektrolit",
+                "${classroomDetailModel!.deskripsi}",
                 style: const TextStyle(fontSize: 12),
               )
             ],

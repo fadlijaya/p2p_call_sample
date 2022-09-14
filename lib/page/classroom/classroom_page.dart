@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/service/classroom_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../theme/colors.dart';
 import 'detail_materi_classroom_page.dart';
 
 class ClassRoomPage extends StatefulWidget {
-  final id_pelajaran;
 
   const ClassRoomPage(
-      {Key? key,
-        required this.id_pelajaran})
+      {Key? key})
       : super(key: key);
 
   @override
@@ -18,6 +17,8 @@ class ClassRoomPage extends StatefulWidget {
 
 class _SmartRoomPageState extends State<ClassRoomPage> {
   List pertemuanList = [];
+
+  String? user_type, id_pelajaran, id_guru;
 
   @override
   Widget build(BuildContext context) {
@@ -31,26 +32,53 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
 
   @override
   void initState() {
-    getDataKelas();
     super.initState();
+    _getIdentitasGuru();
   }
 
-  Future getDataKelas() async {
-    var response = await ClassroomService().getPertemuan(widget.id_pelajaran);
-    if (!mounted) return;
+  _getIdentitasGuru() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     setState(() {
-      pertemuanList = response;
+      user_type = preferences.getString("user_type");
+      if(user_type == "school_teacher") {
+        id_pelajaran = preferences.getInt("pelajaran_id_guru").toString();
+      }else if(user_type == "smart_teacher"){
+        id_guru = preferences.getInt("id").toString();
+      }
     });
+    getDataClassroom();
+  }
+
+  Future getDataClassroom() async {
+    var response;
+    if(user_type == "school_teacher") {
+      response = await ClassroomService().getPertemuanGuruSekolah(id_pelajaran!);
+    }else if(user_type == "smart_teacher"){
+      response = await ClassroomService().getPertemuanGuruSmartSchool(id_guru!);
+    }
+    if (!mounted) return;
+    if(response != null) {
+      setState(() {
+        pertemuanList = response;
+      });
+    }
+  }
+
+  Future refreshClassroom() async{
+    getDataClassroom();
   }
 
   Widget guruSmartSchool() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: ListView.builder(
-          itemCount: pertemuanList.length,
-          itemBuilder: (context, i) {
+    return RefreshIndicator(
+      onRefresh: refreshClassroom,
+      color: kCelticBlue,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: ListView.builder(
+            itemCount: pertemuanList.length,
+            itemBuilder: (context, i) {
               return  Column(
                 children: [
                   ListTile(
@@ -58,7 +86,7 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DetailMateriClassRoomPage())
+                              builder: (context) => DetailMateriClassRoomPage(id_materi: pertemuanList[i].id,))
                       );
                     },
                     leading: const Icon(Icons.book, color: kBlack26,),
@@ -74,7 +102,8 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
                   ),
                 ],
               );
-          }),
+            }),
+      ),
     );
   }
 }

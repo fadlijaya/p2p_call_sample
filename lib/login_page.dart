@@ -64,20 +64,31 @@ class _LoginPageState extends State<LoginPage> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       await preferences.setString("access_token", response['access_token']);
       await preferences.setString("user_type", response['user_type']);
-      await preferences.setString("nip_guru", response['user']['nip']);
-      if(response['user_type'] == "smart_teacher") {
-        await preferences.setInt("id_guru", response['user']['id']);
-        await preferences.setString("nama_guru", response['user']['nama']);
-        await preferences.setInt("pelajaran_id_guru", response['user']['pelajaran_id']);
-      }else if(response['user_type'] == "school_teacher"){
-        await preferences.setInt("id_guru", response['user']['id_guru']);
-        await preferences.setString("nama_guru", response['user']['nama_guru']);
-        await preferences.setInt("id_sekolah_guru", response['user']['id_identitas_sekolah']);
-        await preferences.setString("sekolah_guru", response['user']['nama_sekolah']);
-        await preferences.setInt("pelajaran_id_guru", response['user']['pelajaran_id']);
-      }
-      await preferences.setString("email_guru", response['user']['email']);
       await preferences.setString("profile_picture", response['user']['profile_picture']);
+      await preferences.setString("email", response['user']['email']);
+      await preferences.setString("nip", response['user']['nip']);
+      if(response['user_type'] == "smart_teacher" || response['user_type'] == "school_teacher") {
+        if (response['user_type'] == "smart_teacher") {
+          await preferences.setInt("id", response['user']['id']);
+          await preferences.setString("nama", response['user']['nama']);
+          await preferences.setInt(
+              "pelajaran_id_guru", response['user']['pelajaran_id']);
+        } else if (response['user_type'] == "school_teacher") {
+          await preferences.setInt("id", response['user']['id_guru']);
+          await preferences.setString(
+              "nama", response['user']['nama_guru']);
+          await preferences.setInt(
+              "id_sekolah_guru", response['user']['id_identitas_sekolah']);
+          await preferences.setString(
+              "sekolah_guru", response['user']['nama_sekolah']);
+          await preferences.setInt(
+              "pelajaran_id_guru", response['user']['pelajaran_id']);
+        }
+      }else if(response['user_type'] == "gov_employee") {
+        await preferences.setInt("id", response['user']['id_pegawai']);
+        await preferences.setString("nama", response['user']['nama']);
+        await preferences.setString("bidang_studi", response['user']['pengawas_bidang_studi']);
+      }
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
         context,
@@ -139,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
     child: Container(
         margin: const EdgeInsets.symmetric(vertical: 40),
         child: Image.asset(
-        'assets/logo.png',
+        'assets/logo_smartschool_guru.png',
         width: 160,
         ),
       )

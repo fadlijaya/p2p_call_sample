@@ -52,7 +52,8 @@ flutter:
   assets:
     - icon-app.png
     - splash-screen.png
-    - logo.png
+    - logo_smartschool_guru.png
+    - logo_disdik_sulsel.png
     - scanner.png
     - classroom.png
     - location.png

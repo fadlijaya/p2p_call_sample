@@ -74,7 +74,18 @@ class _FaceDetectorViewState extends State<FaceDetectorView> {
       print("Data Muka : ${_text}");
       print("Data Muka DB : ${widget.rect}");
       if(_text.toString() == widget.rect){
-        print("Berhasil Absen !!");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.info_outline, size: 20, color: Colors.white,),
+              SizedBox(width: 8),
+              Text("Berhasil! Anda berhasil absen",)
+            ],
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          behavior: SnackBarBehavior.floating,
+          elevation: 5,));
       }
     }
     _isBusy = false;

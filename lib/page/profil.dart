@@ -11,17 +11,23 @@ class Profil extends StatefulWidget{
 }
 
 class _ProfilState extends State<Profil>{
-  String? user_type, nip_guru, nama_guru, sekolah_guru, email_guru, profile_picture;
+  String? user_type, nip, nama, jenis_user, email, profile_picture;
 
   _getIdentitas() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     setState((){
       user_type = preferences.getString("user_type");
-      nip_guru = preferences.getString("nip_guru");
-      nama_guru = preferences.getString("nama_guru");
-      sekolah_guru = preferences.getString("sekolah_guru");
-      email_guru = preferences.getString("email_guru");
+      nip = preferences.getString("nip");
+      nama = preferences.getString("nama");
+      email = preferences.getString("email");
       profile_picture = preferences.getString("profile_picture");
+      if(user_type == "smart_teacher"){
+        jenis_user = "Guru Smart School";
+      }else if(user_type == "school_teacher"){
+        jenis_user = preferences.getString("sekolah_guru");
+      }else if(user_type == "gov_employee"){
+        jenis_user = "Pengawas ${preferences.getString("bidang_studi")}";
+      }
     });
   }
 
@@ -59,16 +65,16 @@ class _ProfilState extends State<Profil>{
           const SizedBox(
             height: 12.0,
           ),
-          const  CircleAvatar(
+          CircleAvatar(
             backgroundColor: kGrey,
-            backgroundImage: NetworkImage("https://ui-avatars.com/api/?name=Andi Ahonk&color=FFFFFF&background=111827"),
+            backgroundImage: NetworkImage(profile_picture.toString()),
             radius: 35,
           ),
           const SizedBox(
             height: 12.0,
           ),
           Text(
-            '${nama_guru}',
+            '${nama}',
             style: const TextStyle(
                 fontWeight: FontWeight.w500, fontSize: 18.0, color: kWhite),
           ),
@@ -103,7 +109,7 @@ class _ProfilState extends State<Profil>{
             ),
           ),
           subtitle: Text(
-            '${nip_guru}',
+            '${nip}',
             style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
           ),
         ));
@@ -119,27 +125,25 @@ class _ProfilState extends State<Profil>{
             Icons.school_outlined,
             color: kBlack,
           ),
-          title: const Text(
-            "Asal Sekolah",
-            style: TextStyle(
-              fontSize: 12,
-            ),
-          ),
-          subtitle: Column(
+          title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (user_type == "smart_teacher") ...[
+              if (user_type == "smart_teacher" || user_type == "school_teacher") ...[
                 Text(
-                  "Guru Smart School",
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
+                  "Asal Sekolah",
+                  style: const TextStyle(fontSize: 12),
                 ),
-              ] else if(user_type == "school_teacher")...[
+              ] else if(user_type == "gov_employee")...[
                 Text(
-                  sekolah_guru.toString(),
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
+                  "Bidang Studi",
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ],
+          ),
+          subtitle: Text(
+            "${jenis_user}",
+            style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
           ),
         ));
   }
@@ -161,7 +165,7 @@ class _ProfilState extends State<Profil>{
             ),
           ),
           subtitle: Text(
-            '${email_guru}',
+            '${email}',
             style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
           ),
         ));
