@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../theme/colors.dart';
 import 'detail_materi_classroom_page.dart';
+import 'package:intl/intl.dart';
 
 class ClassRoomPage extends StatefulWidget {
 
@@ -79,28 +80,42 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
         child: ListView.builder(
             itemCount: pertemuanList.length,
             itemBuilder: (context, i) {
-              return  Column(
-                children: [
-                  ListTile(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailMateriClassRoomPage(id_materi: pertemuanList[i].id,))
-                      );
-                    },
-                    leading: const Icon(Icons.book, color: kBlack26,),
-                    title: Text('Pertemuan ${pertemuanList[i].pertemuan_ke}',
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+              return  Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailMateriClassRoomPage(id_materi: pertemuanList[i].id,))
+                        );
+                      },
+                      leading: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.book, color: kBlack26,)
+                        ],
+                      ),
+                      title: Row(
+                        children: [
+                          Text('Pertemuan ${pertemuanList[i].pertemuan_ke}',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          if (pertemuanList[i].tanggal_tayang != null) ...[
+                            Spacer(),
+                            Text("Tanggal ${DateFormat('dd/MM/yyyy').format(DateTime.parse('${pertemuanList[i].tanggal_tayang}'))}",style: const TextStyle(fontSize: 12.0),),
+                          ]
+                        ],
+                      ),
+                      subtitle: Text(
+                        '${pertemuanList[i].judul}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
-                    subtitle: Text(
-                      '${pertemuanList[i].judul}',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600),
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 12,),
-                  ),
-                ],
+                  ],
+                ),
               );
             }),
       ),

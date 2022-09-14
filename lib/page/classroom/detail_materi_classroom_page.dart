@@ -156,7 +156,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
           Spacer(),
           if (classroomDetailModel!.tanggal_tayang != null) ...[
             Text(
-              "Tanggal ${DateFormat('dd/MM/yyyy hh:mm').format(DateTime.parse('${classroomDetailModel!.tanggal_tayang}'))}",
+              "Tanggal ${DateFormat('dd/MM/yyyy').format(DateTime.parse('${classroomDetailModel!.tanggal_tayang}'))}",
               style: const TextStyle(fontWeight: FontWeight.w600),
             )
           ]
