@@ -17,8 +17,8 @@ class ClassRoomPage extends StatefulWidget {
 }
 
 class _SmartRoomPageState extends State<ClassRoomPage> {
-  List pertemuanList = [];
 
+  List ClassroomPertemuanModel = [];
   String? user_type, id_pelajaran, id_guru;
 
   @override
@@ -27,7 +27,7 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
       appBar: AppBar(
         title: const Text("Classroom"),
       ),
-      body: guruSmartSchool(),
+      body: ClassroomGuru(),
     );
   }
 
@@ -60,7 +60,7 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
     if (!mounted) return;
     if(response != null) {
       setState(() {
-        pertemuanList = response;
+        ClassroomPertemuanModel = response;
       });
     }
   }
@@ -69,7 +69,7 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
     getDataClassroom();
   }
 
-  Widget guruSmartSchool() {
+  Widget ClassroomGuru() {
     return RefreshIndicator(
       onRefresh: refreshClassroom,
       color: kCelticBlue,
@@ -77,8 +77,10 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child: ListView.builder(
-            itemCount: pertemuanList.length,
+        child: ClassroomPertemuanModel.isEmpty
+            ? Center(child: CircularProgressIndicator())
+            : ListView.builder(
+            itemCount: ClassroomPertemuanModel.length,
             itemBuilder: (context, i) {
               return  Card(
                 child: Column(
@@ -88,7 +90,7 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DetailMateriClassRoomPage(id_materi: pertemuanList[i].id,))
+                                builder: (context) => DetailMateriClassRoomPage(id_materi: ClassroomPertemuanModel[i].id,))
                         );
                       },
                       leading: Column(
@@ -99,17 +101,17 @@ class _SmartRoomPageState extends State<ClassRoomPage> {
                       ),
                       title: Row(
                         children: [
-                          Text('Pertemuan ${pertemuanList[i].pertemuan_ke}',
+                          Text('Pertemuan ${ClassroomPertemuanModel[i].pertemuan_ke}',
                             style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
-                          if (pertemuanList[i].tanggal_tayang != null) ...[
+                          if (ClassroomPertemuanModel[i].tanggal_tayang != null) ...[
                             Spacer(),
-                            Text("Tanggal ${DateFormat('dd/MM/yyyy').format(DateTime.parse('${pertemuanList[i].tanggal_tayang}'))}",style: const TextStyle(fontSize: 12.0),),
+                            Text("Tanggal ${DateFormat('dd/MM/yyyy').format(DateTime.parse('${ClassroomPertemuanModel[i].tanggal_tayang}'))}",style: const TextStyle(fontSize: 12.0),),
                           ]
                         ],
                       ),
                       subtitle: Text(
-                        '${pertemuanList[i].judul}',
+                        '${ClassroomPertemuanModel[i].judul}',
                         style: const TextStyle(
                             fontWeight: FontWeight.w600),
                       ),

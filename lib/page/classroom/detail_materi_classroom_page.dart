@@ -61,7 +61,7 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         padding: EdgeInsets.all(16.0),
-        child: classroomDetailModel == null || classroomDetailModel == null
+        child: classroomDetailModel == null
             ? Center(child: CircularProgressIndicator())
             : Column(
           children: [
