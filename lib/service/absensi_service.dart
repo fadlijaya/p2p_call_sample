@@ -29,4 +29,30 @@ class AbsensiService{
       return;
     }
   }
+
+  faceSignature(List predictedData) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    try{
+      var url = Uri.parse("$API_V1/face");
+      final response = await http.post(url,
+          headers: <String, String>{
+            'Authorization': 'Bearer '+preferences.getString("access_token")!,
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json'
+          },
+          body: jsonEncode(<String, String>{
+            'face_signature': predictedData.toString(),
+          }));
+      var responseJson = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseJson['data'] != null) {
+        return 200;
+      } else if(response.statusCode == 401){
+        return 401;
+      } else {
+        return;
+      }
+    } on Exception catch (_) {
+      return;
+    }
+  }
 }

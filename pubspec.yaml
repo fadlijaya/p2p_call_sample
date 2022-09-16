@@ -29,10 +29,14 @@ dependencies:
   location: ^4.4.0
   geocoding: ^2.0.5
   another_flushbar: ^1.10.29
-  image_picker: ^0.8.5+3
+  tflite_flutter: ^0.9.0
   camera: ^0.10.0
-  google_mlkit_face_detection:
-    path: dependencies/google_mlkit_face_detection
+  path_provider: ^2.0.9
+  path: ^1.8.0
+  google_ml_kit: ^0.5.0
+  image: ^3.0.2
+  font_awesome_flutter: ^9.0.0
+  get_it: ^7.2.0
 
 dev_dependencies:
   flutter_test:
@@ -60,3 +64,4 @@ flutter:
     - office.png
     - izin.png
     - absen.png
+    - assets/mobilefacenet.tflite

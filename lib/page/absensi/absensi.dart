@@ -6,9 +6,13 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geolocator;
+import 'package:p2p_call_sample/face_recognition/face_recognition.dart';
+import 'package:p2p_call_sample/face_recognition/locator.dart';
+import 'package:p2p_call_sample/face_recognition/services/camera.service.dart';
+import 'package:p2p_call_sample/face_recognition/services/face_detector_service.dart';
+import 'package:p2p_call_sample/face_recognition/services/ml_service.dart';
 import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/model/Absen/Absen_model.dart';
-import 'package:p2p_call_sample/page/absensi/camera/face_detector_view.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -92,11 +96,11 @@ class _AbsensiStateDetail extends State<Absensi> {
         widget.radius = _absenModel.radius!.toDouble();
         widget.rect = _absenModel.rect!;
       });
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);
       });
     }else if(getCordinate == 2){
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);
       });
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -108,7 +112,7 @@ class _AbsensiStateDetail extends State<Absensi> {
                 (route) => false);
       });
     }else{
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -126,6 +130,7 @@ class _AbsensiStateDetail extends State<Absensi> {
       Navigator.pop(context);
     }
   }
+
 
   @override
   void initState(){
@@ -272,7 +277,7 @@ class _AbsensiStateDetail extends State<Absensi> {
           );
           if(distanceInMeters < widget.radius){
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => FaceDetectorView(rect: widget.rect!,)));
+                context, MaterialPageRoute(builder: (context) => FaceRecognition()));
           }else{
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Row(

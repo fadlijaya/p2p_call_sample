@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:p2p_call_sample/face_recognition/locator.dart';
 import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/src/login_screen.dart';
 import 'package:p2p_call_sample/src/select_opsi_login_screen.dart';
@@ -22,13 +23,11 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-List<CameraDescription> cameras = [];
-
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
 
-  cameras = await availableCameras();
+  setupServices();
 
   runApp(App());
 }

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:p2p_call_sample/face_recognition/locator.dart';
+import 'package:p2p_call_sample/face_recognition/services/camera.service.dart';
+import 'package:p2p_call_sample/face_recognition/services/face_detector_service.dart';
+import 'package:p2p_call_sample/face_recognition/services/ml_service.dart';
 import 'package:p2p_call_sample/page/absensi/absensi.dart';
 import 'package:p2p_call_sample/page/dashboard.dart';
 import 'package:p2p_call_sample/page/profil.dart';
@@ -10,6 +14,21 @@ class Home extends StatefulWidget{
 }
 
 class _HomeState extends State<Home>{
+  MLService _mlService = locator<MLService>();
+  FaceDetectorService _mlKitService = locator<FaceDetectorService>();
+  CameraService _cameraService = locator<CameraService>();
+
+  _initializeServices() async {
+    await _cameraService.initialize();
+    await _mlService.initialize();
+    _mlKitService.initialize();
+  }
+
+  @override
+  void initState() {
+    _initializeServices();
+  }
+
   int currenTab = 0;
   final List<Widget> screens = [
     Dashboard(),
