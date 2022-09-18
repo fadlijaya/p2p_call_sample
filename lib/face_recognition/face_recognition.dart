@@ -171,6 +171,8 @@ class FaceRecognitionState extends State<FaceRecognition> {
     showAlertDialogLoading(context);
     var response = await AbsensiService().faceSignature(predictedData);
     if(response == 200) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+        await preferences.setString("face_signature", predictedData.toString());
       Navigator.pop(context);
       this._mlService.setPredictedData([]);
       Navigator.pushAndRemoveUntil(

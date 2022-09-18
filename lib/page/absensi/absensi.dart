@@ -210,13 +210,13 @@ class _AbsensiStateDetail extends State<Absensi> {
                 Container(
                   margin: const EdgeInsets.only(top: 8),
                   width: 60,
-                  height: 8,
+                  height: 5,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12), color: kBlack26),
                 ),
                 Expanded(
                   child: ListView(
-                    padding: EdgeInsets.only(left: 18.0, right: 18.0, top: 8.0, bottom: 18.0),
+                    padding: EdgeInsets.only(left: 18.0, right: 18.0, bottom: 18.0),
                     controller: scrollController,
                     children: [
                       GestureDetector(
@@ -228,7 +228,7 @@ class _AbsensiStateDetail extends State<Absensi> {
                           );
                         },
                         child: ListTile(
-                          leading: Image.asset('assets/icon/office.png',width: 35,),
+                          leading: Image.asset('assets/icon/office.png',width: 30,),
                           title: Text('Lokasi absen', style: const TextStyle(fontWeight: FontWeight.bold,),),
                           subtitle: Text(widget.lokasiAbsen!),
                         ),
