@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:p2p_call_sample/face_recognition/services/image_converter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as imglib;
 
@@ -58,9 +60,25 @@ class MLService {
     this._predictedData = List.from(output);
   }
 
-  // Future<User?> predict() async {
-  //   return _searchResult(this._predictedData);
-  // }
+  Future<bool> predict(List faceSignature) async {
+    double minDist = 999;
+    double currDist = 0.0;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    print(predictedData.toString());
+    // if(preferences.getString("face_signature") != null) {
+    //   print("DATA= "+jsonDecode(preferences.getString("face_signature").toString()));
+    //   currDist = _euclideanDistance(jsonDecode(preferences.getString("face_signature").toString()), predictedData);
+    //   if (currDist <= threshold && currDist < minDist) {
+    //     minDist = currDist;
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // }else{
+    //   return false;
+    // }
+    return false;
+  }
 
   List _preProcess(CameraImage image, Face faceDetected) {
     imglib.Image croppedImage = _cropFace(image, faceDetected);

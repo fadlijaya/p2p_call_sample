@@ -7,10 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geolocator;
 import 'package:p2p_call_sample/face_recognition/face_recognition.dart';
-import 'package:p2p_call_sample/face_recognition/locator.dart';
-import 'package:p2p_call_sample/face_recognition/services/camera.service.dart';
-import 'package:p2p_call_sample/face_recognition/services/face_detector_service.dart';
-import 'package:p2p_call_sample/face_recognition/services/ml_service.dart';
 import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/model/Absen/Absen_model.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
@@ -276,8 +272,7 @@ class _AbsensiStateDetail extends State<Absensi> {
               widget.LongAbsen!
           );
           if(distanceInMeters < widget.radius){
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => FaceRecognition()));
+            cekAbsen();
           }else{
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Row(
@@ -309,6 +304,81 @@ class _AbsensiStateDetail extends State<Absensi> {
         ),
       ),),
     );
+  }
+
+  cekAbsen() async{
+    showAlertDialogLoading(context);
+    var response = await AbsensiService().cekAbsen();
+    if(response != null){
+      if(response['schedule'] == true){
+        if(response['face'] == null){
+          Navigator.pop(context);
+          showAlertFaceSignature(context);
+        }else{
+          Navigator.pop(context);
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: true, jenis_absen: "Absen "+response['schedule_type'],faceSignature: response['face'],)));
+        }
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.info_outline, size: 20, color: Colors.red,),
+              SizedBox(width: 8),
+              Text(response['message'],)
+            ],
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          behavior: SnackBarBehavior.floating,
+          elevation: 5,));
+          Navigator.pop(context);
+      }
+      // bool checkAbsen = false;
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: checkAbsen,)));
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.info_outline, size: 20, color: Colors.red,),
+            SizedBox(width: 8),
+            Text("Gagal! terhubung keserver",)
+          ],
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        behavior: SnackBarBehavior.floating,
+        elevation: 5,));
+      Navigator.pop(context);
+    }
+  }
+
+  showAlertFaceSignature(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Signature Wajah'),
+            content: const Text('Signature wajah anda belum terdefatar. daftar terlebih dahulu ?'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Batal',
+                    style: TextStyle(color: Colors.grey),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: false, jenis_absen: "Signature Wajah", faceSignature: [],)));
+                  },
+                  child: const Text('Ya'))
+            ],
+          );
+        });
   }
 
   Widget GoogleView() {

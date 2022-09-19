@@ -55,4 +55,25 @@ class AbsensiService{
       return;
     }
   }
+
+  cekAbsen() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    try{
+      var url = Uri.parse("$API_V1/gov/schedules");
+      final response = await http.get(url,
+          headers: <String, String>{
+            'Authorization': 'Bearer '+preferences.getString("access_token")!,
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json'
+          });
+      var responseJson = jsonDecode(response.body);
+      if (response.statusCode == 200 && responseJson != null) {
+        return responseJson;
+      } else {
+        return;
+      }
+    } on Exception catch (_) {
+      return;
+    }
+  }
 }

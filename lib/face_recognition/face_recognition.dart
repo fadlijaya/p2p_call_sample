@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
@@ -19,7 +20,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/colors.dart';
 
 class FaceRecognition extends StatefulWidget {
-  const FaceRecognition({Key? key}) : super(key: key);
+  final bool isAbsen;
+  final String jenis_absen;
+  final List faceSignature;
+  const FaceRecognition({Key? key, required this.isAbsen, required this.jenis_absen, required this.faceSignature}) : super(key: key);
 
   @override
   FaceRecognitionState createState() => FaceRecognitionState();
@@ -164,6 +168,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
             borderRadius: BorderRadius.all(Radius.circular(8))),
         behavior: SnackBarBehavior.floating,
         elevation: 5,));
+      _reload();
     }
   }
 
@@ -172,7 +177,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
     var response = await AbsensiService().faceSignature(predictedData);
     if(response == 200) {
       SharedPreferences preferences = await SharedPreferences.getInstance();
-        await preferences.setString("face_signature", predictedData.toString());
+      await preferences.setString("face_signature", predictedData.toString(),);
       Navigator.pop(context);
       this._mlService.setPredictedData([]);
       Navigator.pushAndRemoveUntil(
@@ -211,7 +216,17 @@ class FaceRecognitionState extends State<FaceRecognition> {
     try {
       bool faceDetected = await onShot();
       if (faceDetected) {
-        _faceSignature(context);
+        if(widget.isAbsen == true){
+          bool face = await _mlService.predict(widget.faceSignature);
+          print("DATA ABSEN = "+face.toString());
+          // if(face == true){
+          //   print("Berhasil");
+          // }else{
+          //   print("Gagal");
+          // }
+        }else{
+          _faceSignature(context);
+        }
       }
     } catch (e) {
       print(e);
@@ -280,7 +295,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
           children: [
             body,
             CameraHeader(
-              "Signature Wajah",
+              widget.jenis_absen,
               onBackPressed: _onBackPressed,
             )
           ],
