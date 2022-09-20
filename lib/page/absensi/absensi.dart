@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as geolocator;
+import 'package:p2p_call_sample/face_recognition/absen_face_recognition.dart';
 import 'package:p2p_call_sample/face_recognition/face_recognition.dart';
 import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/model/Absen/Absen_model.dart';
@@ -188,7 +189,7 @@ class _AbsensiStateDetail extends State<Absensi> {
     return DraggableScrollableSheet(
       initialChildSize: 0.2,
       minChildSize: 0.2,
-      maxChildSize: 0.5,
+      maxChildSize: 0.2,
       builder: (BuildContext context, ScrollController scrollController) {
         return Container(
           decoration: const BoxDecoration(
@@ -317,7 +318,7 @@ class _AbsensiStateDetail extends State<Absensi> {
         }else{
           Navigator.pop(context);
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: true, jenis_absen: "Absen "+response['schedule_type'],faceSignature: response['face'],)));
+              context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'],)));
         }
       }else{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -373,7 +374,7 @@ class _AbsensiStateDetail extends State<Absensi> {
               TextButton(
                   onPressed: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: false, jenis_absen: "Signature Wajah", faceSignature: [],)));
+                        context, MaterialPageRoute(builder: (context) => FaceRecognition()));
                   },
                   child: const Text('Ya'))
             ],

@@ -19,14 +19,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/colors.dart';
 
-class FaceRecognition extends StatefulWidget {
-  const FaceRecognition({Key? key}) : super(key: key);
+class AbsenFaceRecognition extends StatefulWidget {
+  final String jenis_absen;
+  final List faceSignature;
+  const AbsenFaceRecognition({Key? key, required this.jenis_absen, required this.faceSignature}) : super(key: key);
 
   @override
-  FaceRecognitionState createState() => FaceRecognitionState();
+  AbsenFaceRecognitionState createState() => AbsenFaceRecognitionState();
 }
 
-class FaceRecognitionState extends State<FaceRecognition> {
+class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
   String? imagePath;
   Face? faceDetected;
   Size? imageSize;
@@ -145,9 +147,9 @@ class FaceRecognitionState extends State<FaceRecognition> {
 
   Future _faceSignature(context) async {
     List predictedData = _mlService.predictedData;
-    log('$predictedData');
+    log('Absen Face : $predictedData');
     if(!predictedData.isEmpty) {
-      postFaceSignature(predictedData);
+      checkFaceSignature();
     }else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(
@@ -165,42 +167,53 @@ class FaceRecognitionState extends State<FaceRecognition> {
     }
   }
 
-  postFaceSignature(List predictedData) async{
-    showAlertDialogLoading(context);
-    var response = await AbsensiService().faceSignature(predictedData);
-    if(response == 200) {
-      Navigator.pop(context);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-              (route) => false);
-    }else if(response == 401){
-      Navigator.pop(context);
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      setState(() {
-        preferences.clear();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false);
-      });
-    }else{
-      Navigator.pop(context);
+  checkFaceSignature() async{
+    // showAlertDialogLoading(context);
+    this._mlService.setFaceSignatureData(widget.faceSignature);
+    bool face = await _mlService.predict();
+    if(face == true){
+      this._mlService.setPredictedData([]);
+      this._mlService.setFaceSignatureData([]);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Row(
           children: [
-            Icon(Icons.info_outline, size: 20, color: Colors.red,),
+            Icon(Icons.info_outline, size: 20, color: Colors.white,),
             SizedBox(width: 8),
-            Text("Gagal! terhubung keserver",)
+            Text("Berhasil! foto sesuai",)
           ],
         ),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(8))),
         behavior: SnackBarBehavior.floating,
         elevation: 5,));
+
+      // Future.delayed(const Duration(seconds: 3), () {
+      //   Navigator.pop(context);
+      // });
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+              (route) => false);
+    }else{
+      this._mlService.setPredictedData([]);
+      this._mlService.setFaceSignatureData([]);
       _reload();
+      // Future.delayed(const Duration(seconds: 3), () {
+      //   Navigator.pop(context);
+      // });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.info_outline, size: 20, color: Colors.red,),
+            SizedBox(width: 8),
+            Text("Gagal! foto anda tidak sesuai",)
+          ],
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        behavior: SnackBarBehavior.floating,
+        elevation: 5,));
     }
-    this._mlService.setPredictedData([]);
   }
 
   Future onTap() async {
@@ -253,7 +266,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
               child: Container(
                 width: width,
                 height:
-                    width * _cameraService.cameraController!.value.aspectRatio,
+                width * _cameraService.cameraController!.value.aspectRatio,
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
@@ -276,7 +289,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
           children: [
             body,
             CameraHeader(
-              "Signature Wajah",
+              "Absen ${widget.jenis_absen}",
               onBackPressed: _onBackPressed,
             )
           ],

@@ -1,11 +1,11 @@
-import 'dart:convert';
+
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:p2p_call_sample/face_recognition/services/image_converter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as imglib;
 
@@ -14,6 +14,7 @@ class MLService {
   double threshold = 0.5;
 
   List _predictedData = [];
+  List _faceSignatureData = [];
   List get predictedData => _predictedData;
 
   Future initialize() async {
@@ -60,24 +61,25 @@ class MLService {
     this._predictedData = List.from(output);
   }
 
-  Future<bool> predict(List faceSignature) async {
-    double minDist = 999;
-    double currDist = 0.0;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    print(predictedData.toString());
-    // if(preferences.getString("face_signature") != null) {
-    //   print("DATA= "+jsonDecode(preferences.getString("face_signature").toString()));
-    //   currDist = _euclideanDistance(jsonDecode(preferences.getString("face_signature").toString()), predictedData);
-    //   if (currDist <= threshold && currDist < minDist) {
-    //     minDist = currDist;
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // }else{
-    //   return false;
-    // }
-    return false;
+  Future<bool> predict() async {
+    try {
+      double minDist = 999;
+      double currDist = 0.0;
+      if(!_faceSignatureData.isEmpty) {
+        currDist = _euclideanDistance(_faceSignatureData, predictedData);
+        if (currDist <= threshold && currDist < minDist) {
+          minDist = currDist;
+          return true;
+        } else {
+          return false;
+        }
+      }else{
+        return false;
+      }
+    }catch(e){
+      print("Error Predict ${e}");
+      return false;
+    }
   }
 
   List _preProcess(CameraImage image, Face faceDetected) {
@@ -150,6 +152,10 @@ class MLService {
 
   void setPredictedData(value) {
     this._predictedData = value;
+  }
+
+  void setFaceSignatureData(value) {
+    this._faceSignatureData = value;
   }
 
   dispose() {}
