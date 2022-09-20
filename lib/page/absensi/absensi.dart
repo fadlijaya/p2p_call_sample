@@ -23,7 +23,6 @@ class Absensi extends StatefulWidget{
   double radius = 80;
   String? lokasiAbsen="";
   String? lokasiLive="";
-  String? rect;
 
   @override
   State<Absensi> createState() => _AbsensiStateDetail();
@@ -91,7 +90,6 @@ class _AbsensiStateDetail extends State<Absensi> {
         widget.LatAbsen = double.parse(_absenModel.lat!);
         widget.LongAbsen = double.parse(_absenModel.lng!);
         widget.radius = _absenModel.radius!.toDouble();
-        widget.rect = _absenModel.rect!;
       });
       Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);
@@ -309,7 +307,7 @@ class _AbsensiStateDetail extends State<Absensi> {
 
   cekAbsen() async{
     showAlertDialogLoading(context);
-    var response = await AbsensiService().cekAbsen();
+    var response = await AbsensiService().cekAbsenPegawai();
     if(response != null){
       if(response['schedule'] == true){
         if(response['face'] == null){
@@ -318,7 +316,7 @@ class _AbsensiStateDetail extends State<Absensi> {
         }else{
           Navigator.pop(context);
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'],)));
+              context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(),)));
         }
       }else{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

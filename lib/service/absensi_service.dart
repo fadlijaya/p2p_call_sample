@@ -56,7 +56,7 @@ class AbsensiService{
     }
   }
 
-  cekAbsen() async {
+  cekAbsenPegawai() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     try{
       var url = Uri.parse("$API_V1/gov/schedules");
@@ -68,6 +68,34 @@ class AbsensiService{
           });
       var responseJson = jsonDecode(response.body);
       if (response.statusCode == 200 && responseJson != null) {
+        return responseJson;
+      } else {
+        return;
+      }
+    } on Exception catch (_) {
+      return;
+    }
+  }
+
+  AbsenPegawai(String lat, String lng) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    try{
+      var url = Uri.parse("$API_V1/gov/presence");
+      final response = await http.post(url,
+          headers: <String, String>{
+            'Authorization': 'Bearer '+preferences.getString("access_token")!,
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json'
+          },
+          body: jsonEncode(<String, String>{
+            'lat': lat,
+            'lng': lng,
+          }));
+      var responseJson = jsonDecode(response.body);
+      print("JSON "+responseJson.toString());
+      if (response.statusCode == 200 && responseJson != null) {
+        return 200;
+      }else if(response.statusCode == 400){
         return responseJson;
       } else {
         return;

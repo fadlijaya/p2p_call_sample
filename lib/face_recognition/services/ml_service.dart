@@ -14,7 +14,6 @@ class MLService {
   double threshold = 0.5;
 
   List _predictedData = [];
-  List _faceSignatureData = [];
   List get predictedData => _predictedData;
 
   Future initialize() async {
@@ -61,12 +60,12 @@ class MLService {
     this._predictedData = List.from(output);
   }
 
-  Future<bool> predict() async {
+  Future<bool> predict(List faceSignature) async {
     try {
       double minDist = 999;
       double currDist = 0.0;
-      if(!_faceSignatureData.isEmpty) {
-        currDist = _euclideanDistance(_faceSignatureData, predictedData);
+      if(!faceSignature.isEmpty) {
+        currDist = _euclideanDistance(faceSignature, predictedData);
         if (currDist <= threshold && currDist < minDist) {
           minDist = currDist;
           return true;
@@ -152,10 +151,6 @@ class MLService {
 
   void setPredictedData(value) {
     this._predictedData = value;
-  }
-
-  void setFaceSignatureData(value) {
-    this._faceSignatureData = value;
   }
 
   dispose() {}
