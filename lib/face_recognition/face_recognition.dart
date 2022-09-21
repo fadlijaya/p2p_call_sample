@@ -177,13 +177,11 @@ class FaceRecognitionState extends State<FaceRecognition> {
     }else if(response == 401){
       Navigator.pop(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      setState(() {
-        preferences.clear();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false);
-      });
+      preferences.clear();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+              (route) => false);
     }else{
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

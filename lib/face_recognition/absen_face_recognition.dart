@@ -9,7 +9,9 @@ import 'package:p2p_call_sample/face_recognition/widgets/camera_detection_previe
 import 'package:p2p_call_sample/face_recognition/widgets/camera_header.dart';
 import 'package:p2p_call_sample/face_recognition/widgets/single_picture.dart';
 import 'package:p2p_call_sample/home.dart';
+import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/colors.dart';
 
@@ -123,40 +125,52 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
         //   behavior: SnackBarBehavior.floating,
         //   elevation: 5,));
         var response = await AbsensiService().AbsenPegawai(widget.lat,widget.lng);
-        if(response == 200){
-          Future.delayed(const Duration(seconds: 3), () {
-            Navigator.pop(context);
-          });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-                  (route) => false);
-        }else if(response != 200 && response != null){
-          Future.delayed(const Duration(seconds: 3), () {
-            Navigator.pop(context);
-          });
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Home()),
-                  (route) => false);
-          showAlertFaceSignature(context,response['message']);
+        if(response != 401){
+          if(response == 200){
+            Future.delayed(const Duration(seconds: 3), () {
+              Navigator.pop(context);
+            });
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+                    (route) => false);
+          }else if(response != 200 && response != null){
+            Future.delayed(const Duration(seconds: 3), () {
+              Navigator.pop(context);
+            });
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Home()),
+                    (route) => false);
+            showAlertFaceSignature(context,response['message']);
+          }else{
+            Future.delayed(const Duration(seconds: 3), () {
+              Navigator.pop(context);
+            });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.info_outline, size: 20, color: Colors.red,),
+                  SizedBox(width: 8),
+                  Text("Gagal! terhubung keserver",)
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8))),
+              behavior: SnackBarBehavior.floating,
+              elevation: 5,));
+            _reload();
+          }
         }else{
           Future.delayed(const Duration(seconds: 3), () {
             Navigator.pop(context);
           });
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.info_outline, size: 20, color: Colors.red,),
-                SizedBox(width: 8),
-                Text("Gagal! terhubung keserver",)
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            behavior: SnackBarBehavior.floating,
-            elevation: 5,));
-          _reload();
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          preferences.clear();
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (route) => false);
         }
       }else{
         Future.delayed(const Duration(seconds: 3), () {

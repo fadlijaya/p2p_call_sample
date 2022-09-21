@@ -99,13 +99,11 @@ class _AbsensiStateDetail extends State<Absensi> {
         Navigator.pop(context);
       });
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      setState(() {
-        preferences.clear();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false);
-      });
+      preferences.clear();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+              (route) => false);
     }else{
       Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);
@@ -309,30 +307,40 @@ class _AbsensiStateDetail extends State<Absensi> {
     showAlertDialogLoading(context);
     var response = await AbsensiService().cekAbsenPegawai();
     if(response != null){
-      if(response['schedule'] == true){
-        if(response['face'] == null){
-          Navigator.pop(context);
-          showAlertFaceSignature(context);
-        }else{
-          Navigator.pop(context);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(),)));
-        }
-      }else{
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.info_outline, size: 20, color: Colors.red,),
-              SizedBox(width: 8),
-              Text(response['message'],)
-            ],
-          ),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8))),
-          behavior: SnackBarBehavior.floating,
-          elevation: 5,));
-          Navigator.pop(context);
-      }
+     if(response != 401){
+       if(response['schedule'] == true){
+         if(response['face'] == null){
+           Navigator.pop(context);
+           showAlertFaceSignature(context);
+         }else{
+           Navigator.pop(context);
+           Navigator.push(
+               context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(),)));
+         }
+       }else{
+         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+           content: Row(
+             children: [
+               Icon(Icons.info_outline, size: 20, color: Colors.red,),
+               SizedBox(width: 8),
+               Text(response['message'],)
+             ],
+           ),
+           shape: RoundedRectangleBorder(
+               borderRadius: BorderRadius.all(Radius.circular(8))),
+           behavior: SnackBarBehavior.floating,
+           elevation: 5,));
+         Navigator.pop(context);
+       }
+     }else{
+       Navigator.pop(context);
+       SharedPreferences preferences = await SharedPreferences.getInstance();
+       preferences.clear();
+       Navigator.pushAndRemoveUntil(
+           context,
+           MaterialPageRoute(builder: (context) => const LoginPage()),
+               (route) => false);
+     }
       // bool checkAbsen = false;
       // Navigator.push(
       //     context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: checkAbsen,)));

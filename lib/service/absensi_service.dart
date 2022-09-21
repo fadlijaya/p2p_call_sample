@@ -69,6 +69,8 @@ class AbsensiService{
       var responseJson = jsonDecode(response.body);
       if (response.statusCode == 200 && responseJson != null) {
         return responseJson;
+      } else if(response.statusCode == 401){
+        return 401;
       } else {
         return;
       }
@@ -95,8 +97,10 @@ class AbsensiService{
       print("JSON "+responseJson.toString());
       if (response.statusCode == 200 && responseJson != null) {
         return 200;
-      }else if(response.statusCode == 400){
+      }else if(response.statusCode == 400) {
         return responseJson;
+      }else if(response.statusCode == 401){
+        return 401;
       } else {
         return;
       }

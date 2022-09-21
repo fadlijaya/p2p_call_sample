@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:p2p_call_sample/page/izin/izin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/colors.dart';
@@ -320,7 +321,13 @@ class _DashboardState extends State<Dashboard>{
             ),
           ),
           GestureDetector(
-            onTap: () => {},
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Izin())
+              )
+            },
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
