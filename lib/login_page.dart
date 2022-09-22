@@ -88,6 +88,10 @@ class _LoginPageState extends State<LoginPage> {
         await preferences.setInt("id", response['user']['id_pegawai']);
         await preferences.setString("nama", response['user']['nama']);
         await preferences.setString("bidang_studi", response['user']['pengawas_bidang_studi']);
+      }else if(response['user_type'] == "gov_supervisor_employee"){
+        await preferences.setInt("id", response['user']['id']);
+        await preferences.setString("nama", response['user']['nama']);
+        await preferences.setString("wilayah_cabdis", "Wilayah "+response['user']['wilayah_cabdis']);
       }
       Navigator.pop(context);
       Navigator.pushAndRemoveUntil(

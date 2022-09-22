@@ -27,6 +27,8 @@ class _ProfilState extends State<Profil>{
         jenis_user = preferences.getString("sekolah_guru");
       }else if(user_type == "gov_employee"){
         jenis_user = "Pengawas ${preferences.getString("bidang_studi")}";
+      }else if(user_type == "gov_supervisor_employee"){
+        jenis_user = "Pengawas ${preferences.getString("wilayah_cabdis")}";
       }
     });
   }
@@ -136,6 +138,11 @@ class _ProfilState extends State<Profil>{
               ] else if(user_type == "gov_employee")...[
                 Text(
                   "Bidang Studi",
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ] else if(user_type == "gov_supervisor_employee")...[
+                Text(
+                  "Wilayah",
                   style: const TextStyle(fontSize: 12),
                 ),
               ],

@@ -26,6 +26,8 @@ class _DashboardState extends State<Dashboard>{
         jenis_user = preferences.getString("sekolah_guru");
       }else if(user_type == "gov_employee"){
         jenis_user = "Dinas Pendidikan Sulawesi Selatan";
+      }else if(user_type == "gov_supervisor_employee"){
+        jenis_user = "Pengawas ${preferences.getString("wilayah_cabdis")}";
       }
     });
   }
@@ -187,7 +189,7 @@ class _DashboardState extends State<Dashboard>{
                       ),
                       if (user_type == "smart_teacher" || user_type == "school_teacher") ...[
                         MenuGuru(),
-                      ] else if(user_type == "gov_employee")...[
+                      ] else if(user_type == "gov_employee" || user_type == "gov_supervisor_employee")...[
                         MenuPegawai(),
                       ],
                     ],
