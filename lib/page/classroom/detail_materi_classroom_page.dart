@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/model/Classroom/Classroom_detail_model.dart';
+import 'package:p2p_call_sample/page/classroom/widget/pdf_view.dart';
+import 'package:p2p_call_sample/page/classroom/widget/pdf_view.dart';
+import 'package:p2p_call_sample/page/classroom/widget/pdf_view.dart';
+import 'package:p2p_call_sample/page/classroom/widget/video_view.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../service/classroom_service.dart';
@@ -183,9 +187,17 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
-              : const Text(
-            "Ada",
-            style: TextStyle(fontSize: 12),
+              : TextButton(
+              onPressed: () =>  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PdfView(
+                        url: classroomDetailModel!.url_file_modul.toString(),
+                      ))),
+              child: const Text(
+                "Lihat",
+                style: TextStyle(fontSize: 12),
+              )
           ),
         ],
       ),
@@ -210,9 +222,17 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
-              : const Text(
-            "Ada",
-            style: TextStyle(fontSize: 12),
+              : TextButton(
+              onPressed: () =>  Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PdfView(
+                        url: classroomDetailModel!.bahan_ajar.toString(),
+                      ))),
+              child: const Text(
+                "Lihat",
+                style: TextStyle(fontSize: 12),
+              ),
           ),
         ],
       ),
@@ -237,9 +257,17 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
-              : const Text(
-            "Ada",
-            style: TextStyle(fontSize: 12),
+              : TextButton(
+            onPressed: () =>  Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PdfView(
+                      url: classroomDetailModel!.bahan_tayang.toString(),
+                    ))),
+            child: const Text(
+              "Lihat",
+              style: TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
@@ -264,9 +292,17 @@ class _DetailMateriClassRoomPageState extends State<DetailMateriClassRoomPage> {
             "Tidak Ada",
             style: TextStyle(fontSize: 12),
           )
-              : const Text(
-            "Ada",
-            style: TextStyle(fontSize: 12),
+              : TextButton(
+            onPressed: () =>  Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => VideoView(
+                      fileVideo: classroomDetailModel!.url_video_bahan.toString(),
+                    ))),
+            child: const Text(
+              "Lihat",
+              style: TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
