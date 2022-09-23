@@ -70,14 +70,14 @@ class _AbsensiStateDetail extends State<Absensi> {
     var response = await AbsensiService().getCordinate();
     showAlertDialogLoading(context);
     if(response != null && response != 401){
-      _absenModel = response;
-      if (_absenModel.id != null) {
+      if(response['status'] == true){
+        _absenModel = AbsenModel.fromJson(response['data']);
         return 1;
       }else{
-        return 0;
+        return 2;
       }
     }else if(response == 401){
-      return 2;
+      return 3;
     }else{
       return 0;
     }
@@ -86,7 +86,7 @@ class _AbsensiStateDetail extends State<Absensi> {
   _dataCordinate() async{
     int getCordinate = await _getCordinate();
     if(getCordinate == 1) {
-      setState((){
+      setState(() {
         widget.LatAbsen = double.parse(_absenModel.lat!);
         widget.LongAbsen = double.parse(_absenModel.lng!);
         widget.radius = _absenModel.radius!.toDouble();
@@ -95,6 +95,28 @@ class _AbsensiStateDetail extends State<Absensi> {
         Navigator.pop(context);
       });
     }else if(getCordinate == 2){
+      Future.delayed(const Duration(seconds: 4), () {
+        Navigator.pop(context);
+      });
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String notice = "lokasi absen belum diatur";
+      if(preferences.getString("user_type") == "gov_supervisor_employee"){
+        notice = "anda tidak memiliki jadwal";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.info_outline, size: 20, color: Colors.red,),
+            SizedBox(width: 8),
+            Text("Gagal! ${notice}",)
+          ],
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        behavior: SnackBarBehavior.floating,
+        elevation: 5,));
+      Navigator.pop(context);
+    }else if(getCordinate == 3){
       Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);
       });

@@ -18,8 +18,8 @@ class AbsensiService{
             'Accept': 'application/json'
           });
       var responseJson = jsonDecode(response.body);
-      if (response.statusCode == 200 && responseJson['data'] != null) {
-        return AbsenModel.fromJson(responseJson['data']);
+      if (response.statusCode == 200) {
+        return responseJson;
       } else if(response.statusCode == 401){
         return 401;
       } else {
