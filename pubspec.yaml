@@ -69,4 +69,7 @@ flutter:
     - office.png
     - izin.png
     - absen.png
-    - assets/mobilefacenet.tflite
+    - info.png
+    - timecheck.png
+    - timex.png
+    - mobilefacenet.tflite

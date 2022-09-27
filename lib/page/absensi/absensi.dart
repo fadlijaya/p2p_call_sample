@@ -70,7 +70,7 @@ class _AbsensiStateDetail extends State<Absensi> {
     var response = await AbsensiService().getCordinate();
     showAlertDialogLoading(context);
     if(response != null && response != 401){
-      if(response['status'] == true){
+      if(response['success'] == true){
         _absenModel = AbsenModel.fromJson(response['data']);
         return 1;
       }else{
