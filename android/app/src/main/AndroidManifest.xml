@@ -28,7 +28,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:label="SmartSchool Guru">
+        android:label="Absen E-Andalan">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

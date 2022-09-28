@@ -97,7 +97,7 @@ class _DashboardState extends State<Dashboard>{
             Spacer(),
             if (user_type == "smart_teacher" || user_type == "school_teacher") ...[
               Image.asset(
-                "assets/logo_smartschool_guru.png",
+                "assets/logo_smartschool.png",
                 width: 80,
               ),
             ] else if(user_type == "gov_employee")...[

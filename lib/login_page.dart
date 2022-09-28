@@ -154,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
     child: Container(
         margin: const EdgeInsets.symmetric(vertical: 40),
         child: Image.asset(
-        'assets/logo_smartschool_guru.png',
+        'assets/logo_smartschool.png',
         width: 160,
         ),
       )
