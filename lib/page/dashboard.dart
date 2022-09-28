@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/page/izin/izin.dart';
+import 'package:p2p_call_sample/service/absensi_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/colors.dart';
@@ -12,6 +14,7 @@ class Dashboard extends StatefulWidget{
 
 class _DashboardState extends State<Dashboard>{
   String? user_type, nip, nama, jenis_user, profile_picture;
+  int hadir=0, izin=0, alfa=0;
 
   _getIdentitasGuru() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -35,6 +38,7 @@ class _DashboardState extends State<Dashboard>{
   @override
   void initState(){
     super.initState();
+    _getStatusKehadiran();
     _getIdentitasGuru();
   }
 
@@ -103,7 +107,7 @@ class _DashboardState extends State<Dashboard>{
             ] else if(user_type == "gov_employee")...[
               Image.asset(
                 "assets/logo_disdik_sulsel.png",
-                width: 70,
+                width: 50,
               ),
             ],
           ],
@@ -114,7 +118,7 @@ class _DashboardState extends State<Dashboard>{
 
   Widget gridKategori() {
     return SizedBox(
-        height: MediaQuery.of(context).size.height / 1.9,
+        height: MediaQuery.of(context).size.height / 1.8,
         child: Padding(
             padding: EdgeInsets.only(top: 170.0),
             child: Padding(
@@ -133,53 +137,61 @@ class _DashboardState extends State<Dashboard>{
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 3,
-                              childAspectRatio: 1.2,
-                              crossAxisSpacing: 16.0,
-                              mainAxisSpacing: 16.0)),
+                              childAspectRatio: 1.0,
+                              mainAxisSpacing: 12.0)),
                           padding: EdgeInsets.all(16.0),
                           children: [
-                            Card(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Status Hadir",
-                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(
-                                      "1 Hari"
-                                  )
-                                ],
-                              ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/icon/timecheck.png",
+                                  width: 20,
+                                ),
+                                SizedBox(height: 5,),
+                                Text(
+                                  "Status Hadir",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                    hadir.toString()+" Hari"
+                                )
+                              ],
                             ),
-                            Card(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Status Izin",
-                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(
-                                      "3 Hari"
-                                  )
-                                ],
-                              ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/icon/info.png",
+                                  width: 20,
+                                ),
+                                SizedBox(height: 5,),
+                                Text(
+                                  "Status Izin",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                    izin.toString()+" Hari"
+                                )
+                              ],
                             ),
-                            Card(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Status Alfa",
-                                    style: TextStyle(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(
-                                      "3 Hari"
-                                  )
-                                ],
-                              ),
-                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/icon/timex.png",
+                                  width: 20,
+                                ),
+                                SizedBox(height: 5,),
+                                Text(
+                                  "Status Alfa",
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                    alfa.toString()+" Hari"
+                                )
+                              ],
+                            )
                           ],
                         ),
                       ),
@@ -207,10 +219,10 @@ class _DashboardState extends State<Dashboard>{
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            childAspectRatio: 1.2,
+            childAspectRatio: 1.0,
             crossAxisSpacing: 16.0,
-            mainAxisSpacing: 16.0)),
-        padding: EdgeInsets.all(16.0),
+            mainAxisSpacing: 12.0)),
+        padding: EdgeInsets.only(left: 16.0,right: 16.0),
         children: [
           GestureDetector(
             onTap: () {
@@ -263,7 +275,13 @@ class _DashboardState extends State<Dashboard>{
             ),
           ),
           GestureDetector(
-            onTap: () => {},
+            onTap: () => {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Izin())
+              )
+            },
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -276,7 +294,7 @@ class _DashboardState extends State<Dashboard>{
                     height: 4,
                   ),
                   const Text(
-                    "\nIzin",
+                    "\nIzin/Cuti",
                     style: TextStyle(fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   )
@@ -295,7 +313,7 @@ class _DashboardState extends State<Dashboard>{
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: (SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 1.4,
+            childAspectRatio: 1.6,
             crossAxisSpacing: 12.0,
             mainAxisSpacing: 12.0)),
         padding: EdgeInsets.only(left: 16.0,right: 16.0),
@@ -342,7 +360,7 @@ class _DashboardState extends State<Dashboard>{
                     height: 4,
                   ),
                   const Text(
-                    "\nIzin",
+                    "\nIzin/Cuti",
                     style: TextStyle(fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   )
@@ -353,6 +371,27 @@ class _DashboardState extends State<Dashboard>{
         ],
       ),
     );
+  }
+
+  _getStatusKehadiran() async{
+    var response = await AbsensiService().getStatusKehadiran();
+    if(response != null && response != 401){
+      setState((){
+        hadir = response['hadir'];
+        izin = response['izin'];
+        alfa = response['alpa'];
+      });
+    }else if(response == 401){
+      Future.delayed(const Duration(seconds: 4), () {
+        Navigator.pop(context);
+      });
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.clear();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+              (route) => false);
+    }
   }
 
 }
