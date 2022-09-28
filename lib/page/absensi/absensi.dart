@@ -18,7 +18,7 @@ import '../../theme/colors.dart';
 class Absensi extends StatefulWidget{
   Absensi({Key? key}) : super(key: key);
 
-  double? Lat, Long;
+  double? Lat=-5.1389010027311, Long=119.49208931472;
   double? LatAbsen=-5.1389010027311, LongAbsen=119.49208931472;
   double radius = 80;
   String? lokasiAbsen="";
@@ -35,6 +35,7 @@ class _AbsensiStateDetail extends State<Absensi> {
   Location _location = Location();
   Set<Marker> markers = Set();
   Set<Circle> circles = Set();
+  Set<Polyline> polyline = Set();
   late AbsenModel _absenModel;
 
   void _onMapCreated(GoogleMapController _cntlr) async{
@@ -49,6 +50,7 @@ class _AbsensiStateDetail extends State<Absensi> {
         widget.Lat = l.latitude!;
         widget.Long = l.longitude!;
       });
+      print("Lokasi "+widget.Lat.toString()+", "+widget.Long.toString());
       if(widget.Lat != null && widget.Long != null){
         await geolocator.placemarkFromCoordinates(widget.Lat!, widget.Long!).then((List<geolocator.Placemark> placemarks){
           geolocator.Placemark place = placemarks[0];
@@ -182,6 +184,24 @@ class _AbsensiStateDetail extends State<Absensi> {
     return circles;
   }
 
+  Set<Polyline> setPolyline() {
+    polyline = Set.from([Polyline(
+      polylineId: PolylineId('1'),
+      color: Colors.red,
+      width: 2,
+      // patterns: [
+      //   PatternItem.dash(8),
+      //   PatternItem.gap(15),
+      // ],
+      points: [
+        LatLng(widget.LatAbsen!, widget.LongAbsen!),
+        LatLng(widget.Lat!, widget.Long!),
+      ],
+    )
+    ]);
+    return polyline;
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -291,20 +311,21 @@ class _AbsensiStateDetail extends State<Absensi> {
               widget.LongAbsen!
           );
           if(distanceInMeters < widget.radius){
-            cekAbsen();
+            cekAbsen(1);
           }else{
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Row(
-                children: [
-                  Icon(Icons.info_outline, size: 20, color: Colors.red,),
-                  SizedBox(width: 8),
-                  Text("Gagal! Anda berada diluar radius",)
-                ],
-              ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8))),
-              behavior: SnackBarBehavior.floating,
-              elevation: 5,));
+            cekAbsen(2);
+            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //   content: Row(
+            //     children: [
+            //       Icon(Icons.info_outline, size: 20, color: Colors.red,),
+            //       SizedBox(width: 8),
+            //       Text("Gagal! Anda berada diluar radius",)
+            //     ],
+            //   ),
+            //   shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.all(Radius.circular(8))),
+            //   behavior: SnackBarBehavior.floating,
+            //   elevation: 5,));
           }
         },
         child: Container(
@@ -325,7 +346,7 @@ class _AbsensiStateDetail extends State<Absensi> {
     );
   }
 
-  cekAbsen() async{
+  cekAbsen(int status) async{
     showAlertDialogLoading(context);
     var response = await AbsensiService().cekAbsenPegawai();
     if(response != null){
@@ -337,7 +358,7 @@ class _AbsensiStateDetail extends State<Absensi> {
          }else{
            Navigator.pop(context);
            Navigator.push(
-               context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(),)));
+               context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(), status: status,)));
          }
        }else{
          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -418,6 +439,7 @@ class _AbsensiStateDetail extends State<Absensi> {
       myLocationEnabled: true,
       markers: getmarkers(),
       circles: getCircler(),
+      polylines: setPolyline(),
     );
   }
 

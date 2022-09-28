@@ -82,10 +82,10 @@ class FaceRecognitionState extends State<FaceRecognition> {
     } else {
       _saving = true;
       await Future.delayed(Duration(milliseconds: 500));
-      // await _cameraService.cameraController?.stopImageStream();
+      await _cameraService.cameraController?.stopImageStream();
       await Future.delayed(Duration(milliseconds: 200));
-      XFile? file = await _cameraService.takePicture();
-      imagePath = file?.path;
+      // XFile? file = await _cameraService.takePicture();
+      // imagePath = file?.path;
 
       setState(() {
         pictureTaken = true;

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/face_recognition/locator.dart';
@@ -17,7 +18,8 @@ class AbsenFaceRecognition extends StatefulWidget {
   final String jenis_absen;
   final List faceSignature;
   final String lat, lng;
-  const AbsenFaceRecognition({Key? key, required this.jenis_absen, required this.faceSignature, required this.lat, required this.lng}) : super(key: key);
+  final int status;
+  const AbsenFaceRecognition({Key? key, required this.jenis_absen, required this.faceSignature, required this.lat, required this.lng, required this.status}) : super(key: key);
 
   @override
   AbsenFaceRecognitionState createState() => AbsenFaceRecognitionState();
@@ -110,6 +112,9 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
     if (_faceDetectorService.faceDetected) {
       bool face = await _mlService.predict(widget.faceSignature);
       if(face == true){
+        XFile? file = await _cameraService.takePicture();
+        String? imagePath = file?.path;
+        print("Foto "+imagePath.toString());
         // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         //   content: Row(
         //     children: [
@@ -122,14 +127,16 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
         //       borderRadius: BorderRadius.all(Radius.circular(8))),
         //   behavior: SnackBarBehavior.floating,
         //   elevation: 5,));
-        var response = await AbsensiService().AbsenPegawai(widget.lat,widget.lng);
+        var response = await AbsensiService().PostAbsen(widget.lat,widget.lng,File(imagePath!),widget.status);
         if(response == 200){
+          deleteFile(File(imagePath!));
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => Home()),
                   (route) => false);
         }else if(response != 200 && response != null){
+          deleteFile(File(imagePath!));
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
               context,
@@ -137,6 +144,7 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
                   (route) => false);
           showAlertFaceSignature(context,response['message']);
         }else{
+          deleteFile(File(imagePath!));
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Row(
@@ -266,5 +274,15 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
             ],
           );
         });
+  }
+
+  Future<void> deleteFile(File file) async {
+    try {
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      // Error in getting access to the file.
+    }
   }
 }
