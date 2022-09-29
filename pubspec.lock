@@ -450,6 +450,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.4.0"
+  location_permissions:
+    dependency: "direct main"
+    description:
+      name: location_permissions
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.1"
   location_platform_interface:
     dependency: transitive
     description:
@@ -840,6 +847,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.0"
+  trust_location:
+    dependency: "direct main"
+    description:
+      name: trust_location
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.13"
   tuple:
     dependency: transitive
     description:

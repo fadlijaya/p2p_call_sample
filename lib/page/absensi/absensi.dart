@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,13 +13,14 @@ import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/model/Absen/Absen_model.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trust_location/trust_location.dart';
 
 import '../../theme/colors.dart';
 
 class Absensi extends StatefulWidget{
   Absensi({Key? key}) : super(key: key);
 
-  double? Lat=-5.1389010027311, Long=119.49208931472;
+  double? Lat, Long;
   double? LatAbsen=-5.1389010027311, LongAbsen=119.49208931472;
   double radius = 80;
   String? lokasiAbsen="";
@@ -37,6 +39,7 @@ class _AbsensiStateDetail extends State<Absensi> {
   Set<Circle> circles = Set();
   Set<Polyline> polyline = Set();
   late AbsenModel _absenModel;
+  bool? _isMockLocation;
 
   void _onMapCreated(GoogleMapController _cntlr) async{
     _controller = _cntlr;
@@ -50,6 +53,20 @@ class _AbsensiStateDetail extends State<Absensi> {
         widget.Lat = l.latitude!;
         widget.Long = l.longitude!;
       });
+      if(_isMockLocation == true){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.info_outline, size: 20, color: Colors.red,),
+              SizedBox(width: 8),
+              Text("Anda terditeksi menggunakan fake gps",)
+            ],
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8))),
+          behavior: SnackBarBehavior.floating,
+          elevation: 5,));
+      }
       print("Lokasi "+widget.Lat.toString()+", "+widget.Long.toString());
       if(widget.Lat != null && widget.Long != null){
         await geolocator.placemarkFromCoordinates(widget.Lat!, widget.Long!).then((List<geolocator.Placemark> placemarks){
@@ -66,6 +83,16 @@ class _AbsensiStateDetail extends State<Absensi> {
         });
       });
     });
+  }
+
+  Future<void> _cekFakeGPS() async {
+    try {
+      TrustLocation.onChange.listen((values) => setState(() {
+        _isMockLocation = values.isMockLocation;
+      }));
+    } on PlatformException catch (e) {
+      print('PlatformException $e');
+    }
   }
 
   Future<int> _getCordinate() async{
@@ -152,6 +179,8 @@ class _AbsensiStateDetail extends State<Absensi> {
   @override
   void initState(){
     super.initState();
+    TrustLocation.start(5);
+    _cekFakeGPS();
     _dataCordinate();
   }
 
@@ -194,8 +223,10 @@ class _AbsensiStateDetail extends State<Absensi> {
       //   PatternItem.gap(15),
       // ],
       points: [
-        LatLng(widget.LatAbsen!, widget.LongAbsen!),
-        LatLng(widget.Lat!, widget.Long!),
+        if(widget.Lat != null && widget.Long != null)...[
+          LatLng(widget.LatAbsen!, widget.LongAbsen!),
+          LatLng(widget.Lat!, widget.Long!),
+        ]
       ],
     )
     ]);
@@ -243,7 +274,7 @@ class _AbsensiStateDetail extends State<Absensi> {
             child: Column(
               children: [
                 Container(
-                  margin: const EdgeInsets.only(top: 8),
+                  margin: const EdgeInsets.only(top: 8.0),
                   width: 60,
                   height: 5,
                   decoration: BoxDecoration(
@@ -265,7 +296,7 @@ class _AbsensiStateDetail extends State<Absensi> {
                         child: ListTile(
                           leading: Image.asset('assets/icon/office.png',width: 30,),
                           title: Text('Lokasi absen', style: const TextStyle(fontWeight: FontWeight.bold,),),
-                          subtitle: Text(widget.lokasiAbsen!),
+                          subtitle: Text(widget.lokasiAbsen!, overflow: TextOverflow.ellipsis, maxLines: 1,),
                         ),
                       ),
                       GestureDetector(
@@ -279,7 +310,7 @@ class _AbsensiStateDetail extends State<Absensi> {
                         child: ListTile(
                           leading: Image.asset('assets/icon/location.png',width: 35,),
                           title: Text('Lokasi anda saat ini', style: const TextStyle(fontWeight: FontWeight.bold,),),
-                          subtitle: Text(widget.lokasiLive!),
+                          subtitle: Text(widget.lokasiLive!, overflow: TextOverflow.ellipsis, maxLines: 1),
                         ),
                       ),
                     ],
@@ -347,26 +378,55 @@ class _AbsensiStateDetail extends State<Absensi> {
   }
 
   cekAbsen(int status) async{
-    showAlertDialogLoading(context);
-    var response = await AbsensiService().cekAbsenPegawai();
-    if(response != null){
-     if(response != 401){
-       if(response['schedule'] == true){
-         if(response['face'] == null){
-           Navigator.pop(context);
-           showAlertFaceSignature(context);
+    if(widget.Lat != null && widget.Long != null && _isMockLocation != null){
+     if(_isMockLocation == false){
+       showAlertDialogLoading(context);
+       var response = await AbsensiService().cekAbsen();
+       if(response != null){
+         if(response != 401){
+           if(response['schedule'] == true){
+             if(response['face'] == null){
+               Navigator.pop(context);
+               showAlertFaceSignature(context);
+             }else{
+               Navigator.pop(context);
+               Navigator.push(
+                   context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(), status: status,)));
+             }
+           }else{
+             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+               content: Row(
+                 children: [
+                   Icon(Icons.info_outline, size: 20, color: Colors.red,),
+                   SizedBox(width: 8),
+                   Text(response['message'],)
+                 ],
+               ),
+               shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.all(Radius.circular(8))),
+               behavior: SnackBarBehavior.floating,
+               elevation: 5,));
+             Navigator.pop(context);
+           }
          }else{
            Navigator.pop(context);
-           Navigator.push(
-               context, MaterialPageRoute(builder: (context) => AbsenFaceRecognition(jenis_absen: response['schedule_type'],faceSignature: response['face'] ,lat: widget.Lat.toString(),lng: widget.Long.toString(), status: status,)));
+           SharedPreferences preferences = await SharedPreferences.getInstance();
+           preferences.clear();
+           Navigator.pushAndRemoveUntil(
+               context,
+               MaterialPageRoute(builder: (context) => const LoginPage()),
+                   (route) => false);
          }
+         // bool checkAbsen = false;
+         // Navigator.push(
+         //     context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: checkAbsen,)));
        }else{
          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
            content: Row(
              children: [
                Icon(Icons.info_outline, size: 20, color: Colors.red,),
                SizedBox(width: 8),
-               Text(response['message'],)
+               Text("Gagal! terhubung keserver",)
              ],
            ),
            shape: RoundedRectangleBorder(
@@ -376,31 +436,19 @@ class _AbsensiStateDetail extends State<Absensi> {
          Navigator.pop(context);
        }
      }else{
-       Navigator.pop(context);
-       SharedPreferences preferences = await SharedPreferences.getInstance();
-       preferences.clear();
-       Navigator.pushAndRemoveUntil(
-           context,
-           MaterialPageRoute(builder: (context) => const LoginPage()),
-               (route) => false);
+       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+         content: Row(
+           children: [
+             Icon(Icons.info_outline, size: 20, color: Colors.red,),
+             SizedBox(width: 8),
+             Text("Anda terditeksi menggunakan fake gps",)
+           ],
+         ),
+         shape: RoundedRectangleBorder(
+             borderRadius: BorderRadius.all(Radius.circular(8))),
+         behavior: SnackBarBehavior.floating,
+         elevation: 5,));
      }
-      // bool checkAbsen = false;
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => FaceRecognition(isAbsen: checkAbsen,)));
-    }else{
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.info_outline, size: 20, color: Colors.red,),
-            SizedBox(width: 8),
-            Text("Gagal! terhubung keserver",)
-          ],
-        ),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8))),
-        behavior: SnackBarBehavior.floating,
-        elevation: 5,));
-      Navigator.pop(context);
     }
   }
 

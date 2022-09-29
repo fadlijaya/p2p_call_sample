@@ -42,6 +42,8 @@ dependencies:
   native_device_orientation: ^1.0.0
   wakelock: ^0.6.2
   auto_orientation: ^2.1.0
+  trust_location: ^2.0.13
+  location_permissions: ^4.0.1
 
 dev_dependencies:
   flutter_test:

@@ -129,14 +129,14 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
         //   elevation: 5,));
         var response = await AbsensiService().PostAbsen(widget.lat,widget.lng,File(imagePath!),widget.status);
         if(response == 200){
-          deleteFile(File(imagePath!));
+          deleteFile(File(imagePath));
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => Home()),
                   (route) => false);
         }else if(response != 200 && response != null){
-          deleteFile(File(imagePath!));
+          deleteFile(File(imagePath));
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
               context,
@@ -144,7 +144,7 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
                   (route) => false);
           showAlertFaceSignature(context,response['message']);
         }else{
-          deleteFile(File(imagePath!));
+          deleteFile(File(imagePath));
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Row(

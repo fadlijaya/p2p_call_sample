@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/login_page.dart';
 import 'package:p2p_call_sample/page/izin/izin.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
+import 'package:p2p_call_sample/service/jadwal_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/colors.dart';
@@ -15,6 +16,8 @@ class Dashboard extends StatefulWidget{
 class _DashboardState extends State<Dashboard>{
   String? user_type, nip, nama, jenis_user, profile_picture;
   int hadir=0, izin=0, alfa=0;
+  String? absenmasuk="--:--:--", absenpulang="--:--:--";
+
 
   _getIdentitasGuru() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -40,6 +43,7 @@ class _DashboardState extends State<Dashboard>{
     super.initState();
     _getStatusKehadiran();
     _getIdentitasGuru();
+    _getJadwalHariIni();
   }
 
   @override
@@ -50,10 +54,13 @@ class _DashboardState extends State<Dashboard>{
           height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   children: <Widget>[buildHeader(), gridKategori()],
                 ),
+                jadwalHariIni()
               ],
             ),
           )));
@@ -371,6 +378,112 @@ class _DashboardState extends State<Dashboard>{
         ],
       ),
     );
+  }
+
+  Widget jadwalHariIni() {
+    return Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.0),
+            child: Text('Jadwal Absen Hari Ini',
+                style: TextStyle(
+                    fontSize: 14, fontWeight: FontWeight.bold, color: kBlack)),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 189,
+                height: 100,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.input_outlined),
+                        SizedBox(width: 10.0,),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Absen Masuk"),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(absenmasuk!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),)
+                          ],
+                        ),
+                      ],
+                    )
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 189,
+                height: 100,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.output_outlined),
+                        SizedBox(width: 10.0,),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Absen Pulang"),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(absenpulang!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kBlack),)
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      )
+    );
+  }
+
+  _getJadwalHariIni() async{
+    var response = await JadwalService().jadwalHariIni();
+    if(response != null && response != 401){
+      setState((){
+        absenmasuk = response['absent_in_at'];
+        absenpulang = response['absent_out_at'];
+      });
+    }else if(response == 401){
+      Future.delayed(const Duration(seconds: 4), () {
+        Navigator.pop(context);
+      });
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.clear();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+              (route) => false);
+    }
   }
 
   _getStatusKehadiran() async{

@@ -80,10 +80,10 @@ class AbsensiService{
     }
   }
 
-  cekAbsenPegawai() async {
+  cekAbsen() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     try{
-      var url = Uri.parse("$API_V1/gov/schedules");
+      var url = Uri.parse("$API_V1/schedules");
       final response = await http.get(url,
           headers: <String, String>{
             'Authorization': 'Bearer '+preferences.getString("access_token")!,
@@ -117,7 +117,7 @@ class AbsensiService{
       request.fields['status'] = status.toString();
       var res = await request.send();
       final respStr = await http.Response.fromStream(res);
-      print("DATA JSON "+jsonDecode(respStr.body).toString());
+      // print("DATA JSON "+jsonDecode(respStr.body).toString());
       if (res.statusCode == 200 &&  jsonDecode(respStr.body) != null) {
         return 200;
       }else if(res.statusCode == 400) {
