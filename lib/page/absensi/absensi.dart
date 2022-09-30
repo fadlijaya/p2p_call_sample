@@ -18,7 +18,9 @@ import 'package:trust_location/trust_location.dart';
 import '../../theme/colors.dart';
 
 class Absensi extends StatefulWidget{
-  Absensi({Key? key}) : super(key: key);
+  int? jenis_absen;
+
+  Absensi({Key? key, this.jenis_absen}) : super(key: key);
 
   double? Lat, Long;
   double? LatAbsen=-5.1389010027311, LongAbsen=119.49208931472;
@@ -67,7 +69,7 @@ class _AbsensiStateDetail extends State<Absensi> {
           behavior: SnackBarBehavior.floating,
           elevation: 5,));
       }
-      print("Lokasi "+widget.Lat.toString()+", "+widget.Long.toString());
+      // print("Lokasi "+widget.Lat.toString()+", "+widget.Long.toString());
       if(widget.Lat != null && widget.Long != null){
         await geolocator.placemarkFromCoordinates(widget.Lat!, widget.Long!).then((List<geolocator.Placemark> placemarks){
           geolocator.Placemark place = placemarks[0];
@@ -87,9 +89,11 @@ class _AbsensiStateDetail extends State<Absensi> {
 
   Future<void> _cekFakeGPS() async {
     try {
-      TrustLocation.onChange.listen((values) => setState(() {
-        _isMockLocation = values.isMockLocation;
-      }));
+      TrustLocation.onChange.listen((values) =>
+          setState(() {
+            _isMockLocation = values.isMockLocation;
+          })
+      );
     } on PlatformException catch (e) {
       print('PlatformException $e');
     }
@@ -137,7 +141,7 @@ class _AbsensiStateDetail extends State<Absensi> {
           children: [
             Icon(Icons.info_outline, size: 20, color: Colors.red,),
             SizedBox(width: 8),
-            Text("Gagal! ${notice}",)
+            Text("Gagal! $notice",)
           ],
         ),
         shape: RoundedRectangleBorder(
@@ -241,9 +245,15 @@ class _AbsensiStateDetail extends State<Absensi> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              "Absensi",
-            ),
+            if (widget.jenis_absen == 1) ...[
+              Text(
+                "Absen Apel",
+              ),
+            ] else if(widget.jenis_absen == 2)...[
+              Text(
+                "Absen Harian",
+              ),
+            ],
           ],
         ),
       ),
@@ -344,19 +354,22 @@ class _AbsensiStateDetail extends State<Absensi> {
           if(distanceInMeters < widget.radius){
             cekAbsen(1);
           }else{
-            cekAbsen(2);
-            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //   content: Row(
-            //     children: [
-            //       Icon(Icons.info_outline, size: 20, color: Colors.red,),
-            //       SizedBox(width: 8),
-            //       Text("Gagal! Anda berada diluar radius",)
-            //     ],
-            //   ),
-            //   shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.all(Radius.circular(8))),
-            //   behavior: SnackBarBehavior.floating,
-            //   elevation: 5,));
+            if(widget.jenis_absen == 1){
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Row(
+                  children: [
+                    Icon(Icons.info_outline, size: 20, color: Colors.red,),
+                    SizedBox(width: 8),
+                    Text("Gagal! Anda berada diluar radius",)
+                  ],
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                behavior: SnackBarBehavior.floating,
+                elevation: 5,));
+            }else if(widget.jenis_absen == 2){
+              cekAbsen(2);
+            }
           }
         },
         child: Container(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/login_page.dart';
+import 'package:p2p_call_sample/page/absensi/riwayat_absensi.dart';
 import 'package:p2p_call_sample/page/izin/izin.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
 import 'package:p2p_call_sample/service/jadwal_service.dart';
@@ -16,7 +17,9 @@ class Dashboard extends StatefulWidget{
 class _DashboardState extends State<Dashboard>{
   String? user_type, nip, nama, jenis_user, profile_picture;
   int hadir=0, izin=0, alfa=0;
-  String? absenmasuk="--:--:--", absenpulang="--:--:--";
+  String? absenmasuk_at="--:--:--", absenmasuk_start="--:--:--", absenmasuk_end="--:--:--";
+  String? absenpulang_at="--:--:--", absenpulang_start="--:--:--", absenpulang_end="--:--:--";
+  String? lokasisekolah="-";
 
 
   _getIdentitasGuru() async{
@@ -60,7 +63,26 @@ class _DashboardState extends State<Dashboard>{
                 Stack(
                   children: <Widget>[buildHeader(), gridKategori()],
                 ),
-                jadwalHariIni()
+                Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Text('Jadwal Absen Hari Ini',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold, color: kBlack)),
+                  ),
+                    if(user_type == "gov_employee")...[
+                      jadwalHariIniPegawai()
+                    ]else if(user_type == "gov_supervisor_employee")...[
+                      jadwalHariIniPengawas()
+                    ]
+                  ],
+                )
+              ),
               ],
             ),
           )));
@@ -84,26 +106,31 @@ class _DashboardState extends State<Dashboard>{
             CircleAvatar(
               backgroundColor: kGrey,
               backgroundImage: NetworkImage(profile_picture.toString()),
-              radius: 35,
+              radius: 30,
             ), const SizedBox(
               width: 10,
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Halo, ${nama}",
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: kWhite)),
-                const SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  "${jenis_user}",
-                  style: const TextStyle(color: kWhite),
-                ),
-              ],
+            Container(
+              width: 220,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Text("Halo, $nama",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: kWhite)),
+                  ),
+                  const SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    "$jenis_user",
+                    style: const TextStyle(color: kWhite),
+                  ),
+                ],
+              ),
             ),
             Spacer(),
             if (user_type == "smart_teacher" || user_type == "school_teacher") ...[
@@ -111,7 +138,7 @@ class _DashboardState extends State<Dashboard>{
                 "assets/logo_smartschool.png",
                 width: 80,
               ),
-            ] else if(user_type == "gov_employee")...[
+            ] else if(user_type == "gov_employee" || user_type == "gov_supervisor_employee")...[
               Image.asset(
                 "assets/logo_disdik_sulsel.png",
                 width: 50,
@@ -260,7 +287,13 @@ class _DashboardState extends State<Dashboard>{
             ),
           ),
           GestureDetector(
-            onTap: () => {},
+            onTap: () => {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                builder: (context) => RiwayatAbsensi())
+              )
+            },
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -273,7 +306,7 @@ class _DashboardState extends State<Dashboard>{
                     height: 4,
                   ),
                   const Text(
-                    "Riwayat\nAbsensi",
+                    "Riwayat\nAbsens",
                     style: TextStyle(fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   )
@@ -326,7 +359,13 @@ class _DashboardState extends State<Dashboard>{
         padding: EdgeInsets.only(left: 16.0,right: 16.0),
         children: [
           GestureDetector(
-            onTap: () => {},
+            onTap: () => {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RiwayatAbsensi())
+              )
+            },
             child: SizedBox(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -339,7 +378,7 @@ class _DashboardState extends State<Dashboard>{
                     height: 4,
                   ),
                   const Text(
-                    "Riwayat\nAbsensi",
+                    "Riwayat\nAbsen",
                     style: TextStyle(fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   )
@@ -380,99 +419,140 @@ class _DashboardState extends State<Dashboard>{
     );
   }
 
-  Widget jadwalHariIni() {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 8.0),
-            child: Text('Jadwal Absen Hari Ini',
-                style: TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.bold, color: kBlack)),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 189,
-                height: 100,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(Icons.input_outlined),
-                        SizedBox(width: 10.0,),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Absen Masuk"),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(absenmasuk!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),)
-                          ],
-                        ),
-                      ],
-                    )
-                  ),
-                ),
+  Widget jadwalHariIniPegawai() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 120,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
               ),
-              SizedBox(
-                width: 189,
-                height: 100,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+              child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            "assets/icon/timein.png",
+                            width: 20,
+                          ),
+                          SizedBox(width: 10.0,),
+                          Text("Absen Masuk"),
+                        ],
+                      ),
+                      Text(absenmasuk_at!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(absenmasuk_start!+" - "+absenmasuk_end!, style: TextStyle(color: Colors.black),)
+                    ],
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 120,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(Icons.output_outlined),
-                        SizedBox(width: 10.0,),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Absen Pulang"),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(absenpulang!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kBlack),)
-                          ],
+                        Image.asset(
+                          "assets/icon/timeout.png",
+                          width: 20,
                         ),
+                        SizedBox(width: 10.0,),
+                        Text("Absen Pulang"),
                       ],
                     ),
-                  ),
+                    Text(absenpulang_at!, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(absenpulang_start!+" - "+absenpulang_end!, style: TextStyle(color: Colors.red),)
+                  ],
                 ),
               ),
-            ],
-          )
-        ],
-      )
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget jadwalHariIniPengawas() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: 100,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.location_on_outlined),
+                SizedBox(width: 10.0,),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Lokasi Absen"),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(lokasisekolah!, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),)
+                  ],
+                ),
+              ],
+            )
+        ),
+      ),
     );
   }
 
   _getJadwalHariIni() async{
     var response = await JadwalService().jadwalHariIni();
     if(response != null && response != 401){
-      setState((){
-        absenmasuk = response['absent_in_at'];
-        absenpulang = response['absent_out_at'];
-      });
+      if(user_type == "gov_employee"){
+        setState((){
+          absenmasuk_at = response['absent_in_at'];
+          absenmasuk_start = response['absent_in_start_at'];
+          absenmasuk_end = response['absent_in_end_at'];
+          absenpulang_at = response['absent_out_at'];
+          absenpulang_start = response['absent_out_start_at'];
+          absenpulang_end = response['absent_out_end_at'];
+        });
+      }else if(user_type == "gov_supervisor_employee"){
+        setState((){
+          lokasisekolah = response['school'];
+        });
+      }
     }else if(response == 401){
       Future.delayed(const Duration(seconds: 4), () {
         Navigator.pop(context);

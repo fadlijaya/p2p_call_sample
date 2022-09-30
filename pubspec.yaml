@@ -74,4 +74,6 @@ flutter:
     - info.png
     - timecheck.png
     - timex.png
+    - timein.png
+    - timeout.png
     - mobilefacenet.tflite

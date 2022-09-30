@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../src/utils/configs.dart';
-import '../model/Absen/Absen_model.dart';
 
 class AbsensiService{
   getStatusKehadiran() async {

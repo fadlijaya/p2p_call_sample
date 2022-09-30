@@ -31,27 +31,39 @@ class _IzinState extends State<Izin> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              "Izin",
+    return DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: const TabBar(
+              indicatorColor: kWhite,
+              labelColor: kWhite,
+              tabs: [
+                Tab(text: "Disetujui"),
+                Tab(text: "Menunggu"),
+                Tab(text: "Ditolak"),
+              ],
             ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: Text("List Izin"),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kCelticBlue,
-        onPressed: _bottomSheetIzin,
+            title: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Izin / Cuti",
+                ),
+              ],
+            ),
+          ),
+          body: Center(
+            child: Text("List Izin"),
+          ),
+          floatingActionButton: FloatingActionButton(
+            backgroundColor: kCelticBlue,
+            onPressed: _bottomSheetIzin,
 
-        child: const Icon(Icons.file_copy_rounded),
-      ),
+            child: const Icon(Icons.file_copy_rounded),
+          ),
+        )
     );
   }
 
@@ -460,7 +472,7 @@ class _IzinState extends State<Izin> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Info'),
-            content: Text('${message}'),
+            content: Text('$message'),
             actions: [
               TextButton(
                   onPressed: () {

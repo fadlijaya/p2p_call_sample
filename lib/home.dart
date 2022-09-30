@@ -51,13 +51,7 @@ class _HomeState extends State<Home>{
               "assets/scanner.png",
               width: 30.0,
         ),
-        onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Absensi())
-          );
-        },
+        onPressed: () => showModalBottomView(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
@@ -128,6 +122,39 @@ class _HomeState extends State<Home>{
         ),
       ),
     );
+  }
+
+  showModalBottomView(){
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                title: new Text('Absen Apel'),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Absensi(jenis_absen: 1,)
+                    )
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 12,),
+              ),
+              const Divider(thickness: 1,),
+              ListTile(
+                title: new Text('Absen Harian'),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Absensi(jenis_absen: 2,)
+                    )
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 12,),
+              )
+            ],
+          );
+        });
   }
 
 }

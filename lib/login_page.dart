@@ -1,18 +1,11 @@
-import 'dart:convert';
 
-import 'package:connectycube_sdk/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:p2p_call_sample/service/login_service.dart';
-import 'package:p2p_call_sample/src/select_opponents_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
-import 'src/managers/call_manager.dart';
 import 'src/utils/consts.dart';
-import 'src/utils/pref_util.dart';
 import 'theme/colors.dart';
-import 'src/utils/configs.dart' as config;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -151,12 +144,16 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget buildIconLogo() {
     return Padding(padding: EdgeInsets.only(top: 60.0),
-    child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 40),
-        child: Image.asset(
-        'assets/logo_smartschool.png',
-        width: 160,
-        ),
+    // child: Container(
+    //     margin: const EdgeInsets.symmetric(vertical: 40),
+    //     child: Image.asset(
+    //     'assets/logo_smartschool.png',
+    //     width: 160,
+    //     ),
+    //   )
+      child: Padding(
+        padding: EdgeInsets.only(top: 50.0, bottom: 50.0),
+        child: Text("Adaji Andalanta", style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),),
       )
     );
   }

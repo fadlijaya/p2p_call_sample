@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/model/Classroom/Classroom_detail_model.dart';
 import 'package:p2p_call_sample/page/classroom/widget/pdf_view.dart';
-import 'package:p2p_call_sample/page/classroom/widget/pdf_view.dart';
-import 'package:p2p_call_sample/page/classroom/widget/pdf_view.dart';
 import 'package:p2p_call_sample/page/classroom/widget/video_view.dart';
 import 'package:video_player/video_player.dart';
 

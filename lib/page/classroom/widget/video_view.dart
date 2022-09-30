@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:p2p_call_sample/page/classroom/widget/video_player_both_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../theme/colors.dart';

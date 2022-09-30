@@ -6,9 +6,9 @@ import 'package:p2p_call_sample/model/Classroom/Classroom_detail_model.dart';
 import '../../src/utils/configs.dart';
 import '../model/Classroom/Classroom_pertemuan_model.dart';
 class ClassroomService{
-  getPertemuanGuruSekolah(String id_pelajaran) async {
+  getPertemuanGuruSekolah(String idPelajaran) async {
     try{
-      var url = Uri.parse("$API_V2/materi_live_streaming/pelajaran/"+id_pelajaran);
+      var url = Uri.parse("$API_V2/materi_live_streaming/pelajaran/"+idPelajaran);
       final response = await http.get(url,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
@@ -26,9 +26,9 @@ class ClassroomService{
     }
   }
 
-  getPertemuanGuruSmartSchool(String id_pelajaran) async {
+  getPertemuanGuruSmartSchool(String idPelajaran) async {
     try{
-      var url = Uri.parse("$API_V2/materi_live_streaming/guru_smart/"+id_pelajaran);
+      var url = Uri.parse("$API_V2/materi_live_streaming/guru_smart/"+idPelajaran);
       final response = await http.get(url,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
@@ -46,9 +46,9 @@ class ClassroomService{
     }
   }
 
-  getDetail(String id_materi) async {
+  getDetail(String idMateri) async {
     try{
-      var url = Uri.parse("$API_V2/materi_live_streaming/detail/"+id_materi);
+      var url = Uri.parse("$API_V2/materi_live_streaming/detail/"+idMateri);
       final response = await http.get(url,
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',

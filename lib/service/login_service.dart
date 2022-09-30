@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../src/utils/configs.dart';
-import '../model/Absen/Absen_model.dart';
 class LoginService{
   login(String nip, String password) async {
     try{

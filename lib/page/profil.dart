@@ -76,7 +76,7 @@ class _ProfilState extends State<Profil>{
             height: 12.0,
           ),
           Text(
-            '${nama}',
+            '$nama',
             style: const TextStyle(
                 fontWeight: FontWeight.w500, fontSize: 18.0, color: kWhite),
           ),
@@ -111,7 +111,7 @@ class _ProfilState extends State<Profil>{
             ),
           ),
           subtitle: Text(
-            '${nip}',
+            '$nip',
             style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
           ),
         ));
@@ -149,7 +149,7 @@ class _ProfilState extends State<Profil>{
             ],
           ),
           subtitle: Text(
-            "${jenis_user}",
+            "$jenis_user",
             style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
           ),
         ));
@@ -172,7 +172,7 @@ class _ProfilState extends State<Profil>{
             ),
           ),
           subtitle: Text(
-            '${email}',
+            '$email',
             style: const TextStyle(fontWeight: FontWeight.bold, color: kBlack),
           ),
         ));

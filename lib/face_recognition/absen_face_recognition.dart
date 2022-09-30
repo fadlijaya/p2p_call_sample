@@ -8,7 +8,6 @@ import 'package:p2p_call_sample/face_recognition/services/face_detector_service.
 import 'package:p2p_call_sample/face_recognition/services/ml_service.dart';
 import 'package:p2p_call_sample/face_recognition/widgets/camera_detection_preview.dart';
 import 'package:p2p_call_sample/face_recognition/widgets/camera_header.dart';
-import 'package:p2p_call_sample/face_recognition/widgets/single_picture.dart';
 import 'package:p2p_call_sample/home.dart';
 import 'package:p2p_call_sample/service/absensi_service.dart';
 
@@ -136,6 +135,9 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
               MaterialPageRoute(builder: (context) => Home()),
                   (route) => false);
         }else if(response != 200 && response != null){
+          _cameraService.dispose();
+          _mlService.dispose();
+          _faceDetectorService.dispose();
           deleteFile(File(imagePath));
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
@@ -167,7 +169,7 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
             children: [
               Icon(Icons.info_outline, size: 20, color: Colors.red,),
               SizedBox(width: 8),
-              Text("Gagal! foto anda tidak sesuai",)
+              Text("Gagal! wajah anda tidak dikenali",)
             ],
           ),
           shape: RoundedRectangleBorder(
@@ -261,7 +263,7 @@ class AbsenFaceRecognitionState extends State<AbsenFaceRecognition> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Info'),
-            content: Text('${message}'),
+            content: Text('$message'),
             actions: [
               TextButton(
                   onPressed: () {

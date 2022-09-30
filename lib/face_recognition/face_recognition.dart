@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
@@ -82,10 +81,11 @@ class FaceRecognitionState extends State<FaceRecognition> {
     } else {
       _saving = true;
       await Future.delayed(Duration(milliseconds: 500));
-      await _cameraService.cameraController?.stopImageStream();
+      // await _cameraService.cameraController?.stopImageStream();
       await Future.delayed(Duration(milliseconds: 200));
-      // XFile? file = await _cameraService.takePicture();
-      // imagePath = file?.path;
+      XFile? file = await _cameraService.takePicture();
+      imagePath = file?.path;
+      deleteFile(File(imagePath!));
 
       setState(() {
         pictureTaken = true;
@@ -146,7 +146,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
   Future _faceSignature(context) async {
     List predictedData = _mlService.predictedData;
     log('$predictedData');
-    if(!predictedData.isEmpty) {
+    if(predictedData.isNotEmpty) {
       postFaceSignature(predictedData);
     }else{
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -210,7 +210,7 @@ class FaceRecognitionState extends State<FaceRecognition> {
         _faceSignature(context);
       }
     } catch (e) {
-      print("ERROR ${e}");
+      print("ERROR $e");
     }
   }
 
@@ -335,5 +335,15 @@ class FaceRecognitionState extends State<FaceRecognition> {
         );
       },
     );
+  }
+
+  Future<void> deleteFile(File file) async {
+    try {
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      // Error in getting access to the file.
+    }
   }
 }

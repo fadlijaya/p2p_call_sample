@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:p2p_call_sample/face_recognition/services/image_converter.dart';
-import 'dart:developer';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as imglib;
 
@@ -64,7 +63,7 @@ class MLService {
     try {
       double minDist = 999;
       double currDist = 0.0;
-      if(!faceSignature.isEmpty) {
+      if(faceSignature.isNotEmpty) {
         currDist = _euclideanDistance(faceSignature, predictedData);
         if (currDist <= threshold && currDist < minDist) {
           minDist = currDist;
@@ -76,7 +75,7 @@ class MLService {
         return false;
       }
     }catch(e){
-      print("Error Predict ${e}");
+      print("Error Predict $e");
       return false;
     }
   }
